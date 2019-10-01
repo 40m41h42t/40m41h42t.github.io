@@ -46,6 +46,7 @@ branches:
 
 # install hexo & clone theme
 before_install:
+  - export TZ='Asia/Shanghai' # Set Timezone
   - npm install hexo-cli -g
   - git clone -b dev https://github.com/Molunerfinn/hexo-theme-melody themes/melody
 
@@ -92,3 +93,7 @@ after_script:
 [Hexo 遇上 Travis-CI：可能是最通俗易懂的自动发布博客图文教程](https://juejin.im/post/5a1fa30c6fb9a045263b5d2a)
 
 [Github美化-Travis与Codecov入门](https://hjptriplebee.github.io/Travis%E4%B8%8ECodecov%E5%85%A5%E9%97%A8.html/)
+
+[持续集成在Hexo自动化部署上的实践](https://qinyuanpei.github.io/posts/3521618732/)
+
+[使用Travis CI自动部署Hexo博客](https://www.itfanr.cc/2017/08/09/using-travis-ci-automatic-deploy-hexo-blogs/)
