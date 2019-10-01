@@ -1,0 +1,38 @@
+# 语言环境
+language: node_js
+node_js: stable
+
+# 添加缓存
+cache:
+  directories:
+    - node_modules
+
+# 只检测 blog-source 上的代码提交
+branches:
+  only:
+    - blog-source
+
+before_install:
+  - npm install hexo-cli -g
+  - git clone -b dev https://github.com/Molunerfinn/hexo-theme-melody themes/melody
+
+# Start: Build Lifecycle
+install:
+  - npm install
+  - npm install hexo-renderer-jade hexo-renderer-stylus --save
+  - npm install hexo-deployer-git --save
+  - npm install hexo-generator-feed
+
+# 执行清缓存，生成网页操作
+script:
+  - hexo clean
+  - hexo generate
+
+# 设置git提交名，邮箱；替换真实token到_config.yml文件，最后depoy部署
+after_script:
+  - git config user.name "Quartz"
+  - git config user.email "ikav.css@gmail.com"
+  # 替换同目录下的_config.yml文件中gh_token字符串为travis后台刚才配置的变量，注意此处sed命令用了双引号。单引号无效！
+  - sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
+  - hexo deploy
+# End: Build LifeCycle

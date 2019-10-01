@@ -1,0 +1,62 @@
+---
+title: 生活小常识之Windows右键打开
+date: 2018-11-29 20:55:10
+tags: [Windows, Register]
+categories: 小常识
+---
+
+嗯...
+
+<!--more-->
+
+写了一个[脚本](./IDAx86OpenFile.reg)，没测试过，欢迎测试
+
+代码为：
+
+```
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\*\shell\IDAx86]
+@="Open with IDA x86"
+"Icon"="C:\\Program Files\\IDA 7.0\\ida.exe"
+
+[HKEY_CLASSES_ROOT\*\shell\IDAx86\command]
+@="C:\\Program Files\\IDA 7.0\\ida.exe %1"
+
+[HKEY_CLASSES_ROOT\*\shell\IDAx64]
+@="Open with IDA x64"
+"Icon"="C:\\Program Files\\IDA 7.0\\ida64.exe"
+
+[HKEY_CLASSES_ROOT\*\shell\IDAx64\command]
+@="C:\\Program Files\\IDA 7.0\\ida64.exe %1"
+```
+
+
+
+补充：使用dnspy右键打开：
+
+```
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\*\shell\dnSpyx86]
+@="Open with dnSPy x86"
+"Icon"="C:\\dnSpy\\dnSpy-x86.exe"
+
+[HKEY_CLASSES_ROOT\*\shell\dnSpyx86\command]
+@="C:\\dnSpy\\dnSpy-x86.exe %1"
+
+[HKEY_CLASSES_ROOT\*\shell\dnSpyx64]
+@="Open with dnSPy x64"
+"Icon"="C:\\dnSpy\\dnSpy.exe"
+
+[HKEY_CLASSES_ROOT\*\shell\dnSpyx64\command]
+@="C:\\dnSpy\\dnSpy.exe %1"
+```
+
+
+
+参考资料：
+
+[Windows 为VSCode添加右键菜单项](https://www.jianshu.com/p/d7e91b1e33e8)
+
+[制作右键菜单 快速用IDA打开](https://bbs.pediy.com/thread-191632.htm)
