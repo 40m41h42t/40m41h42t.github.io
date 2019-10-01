@@ -12,6 +12,7 @@ branches:
   only:
     - blog-source
 
+# install hexo & clone theme
 before_install:
   - npm install hexo-cli -g
   - git clone -b dev https://github.com/Molunerfinn/hexo-theme-melody themes/melody
@@ -19,9 +20,9 @@ before_install:
 # Start: Build Lifecycle
 install:
   - npm install
-  - npm install hexo-renderer-jade hexo-renderer-stylus --save
-  - npm install hexo-deployer-git --save
-  - npm install hexo-generator-feed
+  - npm install hexo-renderer-jade hexo-renderer-stylus --save # medoly 主题需要的插件
+  - npm install hexo-deployer-git --save # git 部署
+  - npm install hexo-generator-feed # RSS generate
 
 # 执行清缓存，生成网页操作
 script:
