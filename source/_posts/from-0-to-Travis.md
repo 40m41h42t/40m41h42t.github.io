@@ -73,10 +73,22 @@ after_script:
 
 可以看到，最后部署的时候我们需要输入这样的一个敏感信息。它的生成方式也比较简单：在 [GitHub](https://github.com/settings/tokens) 生成一个新 token，然后在 [Travis](https://travis-ci.org/account/repositories) 相关设置的环境变量（Environment Variables）中设置 `GH_TOKEN`（以及其他你想要的环境变量）即可。
 
-之后推送一下就可以发现成功啦。以后想要写博客、改博客也没有必要抱着电脑，只要能联网就可以随便写了。除此之外我把图床也放在了 GitHub 上，还真是充分利用了 GitHub 的网盘和云盘功能啊（逃
+之后推送一下就可以发现成功啦。以后想要写博客、改博客也没有必要抱着电脑，只要能联网就可以随便写了。除此之外我把图床也放在了 GitHub 上，还真是充分利用了 GitHub 的网盘和笔记功能啊（逃
+
+除此之外，我们从项目右侧的图标中获取链接，查看生成状态。
+
+``` markdown
+[![Build Status](https://travis-ci.org/40m41h42t/40m41h42t.github.io.svg?branch=blog-source)](https://travis-ci.org/40m41h42t/40m41h42t.github.io)
+```
+
+效果如下：
+
+[![Build Status](https://travis-ci.org/40m41h42t/40m41h42t.github.io.svg?branch=blog-source)](https://travis-ci.org/40m41h42t/40m41h42t.github.io)
 
 ## 参考文章
 
 [Travis CI 持续集成](https://kchen.cc/2016/11/12/hexo-instructions/)
 
 [Hexo 遇上 Travis-CI：可能是最通俗易懂的自动发布博客图文教程](https://juejin.im/post/5a1fa30c6fb9a045263b5d2a)
+
+[Github美化-Travis与Codecov入门](https://hjptriplebee.github.io/Travis%E4%B8%8ECodecov%E5%85%A5%E9%97%A8.html/)
