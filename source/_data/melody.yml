@@ -58,9 +58,9 @@ code_word_wrap: true
 social:
   #icon_name: url
   github fa: https://github.com/40m41h42t
-  paper-plane fa: https://t.me/qrzbing
+  paper-plane fa: https://t.me/s/qrzbing
   envelope fa: mailto:qrzbing#foxmail.com
-  rss fa: https://qrzbing.cn/atom.xml
+  rss fa: https://blog.qrzbing.cn/atom.xml
 
 # Algolia search
 # ---------------
