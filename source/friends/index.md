@@ -34,3 +34,5 @@ pwn 超厉害的罗师傅 [hac425](https://www.cnblogs.com/hac425/)
 [A2OS-SafeU](https://safeu.a2os.club/)
 
 [KarlRixon](https://blog.karlrixon.cn/)
+
+[Raphael Yang’s Tabloid](https://zhizhiyang.cn/)
