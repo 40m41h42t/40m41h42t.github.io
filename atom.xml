@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>QRZ&#39;s Blog</title>
+  <icon>http://blog.qrzbing.cn/icon.png</icon>
+  <subtitle>时光如水流逝，智慧与日俱增——</subtitle>
+  <link href="http://blog.qrzbing.cn/atom.xml" rel="self"/>
+  
+  <link href="http://blog.qrzbing.cn/"/>
+  <updated>2020-12-07T12:43:38.520Z</updated>
+  <id>http://blog.qrzbing.cn/</id>
+  
+  <author>
+    <name>QRZ</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>data 段代码注入</title>
+    <link href="http://blog.qrzbing.cn/2020/04/18/data-infector/"/>
+    <id>http://blog.qrzbing.cn/2020/04/18/data-infector/</id>
+    <published>2020-04-18T13:29:16.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;我们可以通过向 data 段劫持代码并将程序的运行流劫持到这里实现我们希望的功能（包括执行恶意代码、软件保护等）。这一过程中可能是最复杂也是最重要的部分就是怎样将新增的代码注入到 data 段中了。&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>我的 2019 总结</title>
+    <link href="http://blog.qrzbing.cn/2019/12/31/my-2019/"/>
+    <id>http://blog.qrzbing.cn/2019/12/31/my-2019/</id>
+    <published>2019-12-31T03:24:27.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;学习一下赵神做一下年终总结，虽然自己很菜就是啦。&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>angr 入门（三）</title>
+    <link href="http://blog.qrzbing.cn/2019/10/04/angr-newhand-3/"/>
+    <id>http://blog.qrzbing.cn/2019/10/04/angr-newhand-3/</id>
+    <published>2019-10-04T15:03:59.000Z</published>
+    <updated>2020-12-07T12:43:38.512Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;本篇主要记录了新手使用 angr 对内存和寄存器操作的记录。题目分析顺序参考了这篇文章：&lt;a href=&quot;https://xz.aliyun.com/t/4052&quot;&gt;深入浅出angr（三）&lt;/a&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="re" scheme="http://blog.qrzbing.cn/tags/re/"/>
+    
+    <category term="angr" scheme="http://blog.qrzbing.cn/tags/angr/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用 Travis CI 自动部署 Hexo 博客</title>
+    <link href="http://blog.qrzbing.cn/2019/10/01/from-0-to-Travis/"/>
+    <id>http://blog.qrzbing.cn/2019/10/01/from-0-to-Travis/</id>
+    <published>2019-10-01T12:28:15.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;最近一直在 Manjaro 和 Windows 之间切换，现在学习都已经在 Manjaro 上进行了，但是博客还在 Windows 上。虽然迁移过来并不难，但还是太麻烦了。另外写博客还要开电脑，的确有点麻烦。作为一个懒人当然是动动手自动推送最好，我就想到了用 &lt;a href=&quot;https://travis-ci.org/&quot;&gt;Travis CI&lt;/a&gt; 来自动部署博客。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="blog" scheme="http://blog.qrzbing.cn/tags/blog/"/>
+    
+    <category term="travis" scheme="http://blog.qrzbing.cn/tags/travis/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>angr 入门（二）</title>
+    <link href="http://blog.qrzbing.cn/2019/09/30/angr-newhand-2/"/>
+    <id>http://blog.qrzbing.cn/2019/09/30/angr-newhand-2/</id>
+    <published>2019-09-30T08:58:25.000Z</published>
+    <updated>2020-12-07T12:43:38.512Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;这里更进一步地学习了 angr 的一些知识点。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="re" scheme="http://blog.qrzbing.cn/tags/re/"/>
+    
+    <category term="angr" scheme="http://blog.qrzbing.cn/tags/angr/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>angr 入门（一）</title>
+    <link href="http://blog.qrzbing.cn/2019/09/15/angr-newhand-1/"/>
+    <id>http://blog.qrzbing.cn/2019/09/15/angr-newhand-1/</id>
+    <published>2019-09-14T17:24:34.000Z</published>
+    <updated>2020-12-07T12:43:38.512Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;让我们从官方文档走起。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="angr" scheme="http://blog.qrzbing.cn/tags/angr/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>【译】通过 Rust 学习解析器组合器 — 第四部分</title>
+    <link href="http://blog.qrzbing.cn/2019/08/25/learning-parser-combinators-with-rust-4/"/>
+    <id>http://blog.qrzbing.cn/2019/08/25/learning-parser-combinators-with-rust-4/</id>
+    <published>2019-08-25T14:56:49.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;原文地址：&lt;a href=&quot;https://bodil.lol/parser-combinators/&quot;&gt;Learning Parser Combinators With Rust&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;原文作者：&lt;a href=&quot;https://bodil.lol/&quot;&gt;Bodil&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;译文出自：&lt;a href=&quot;https://github.com/xitu/gold-miner&quot;&gt;掘金翻译计划&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;本文永久链接：&lt;a href=&quot;https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-4.md&quot;&gt;https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-4.md&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;译者：&lt;a href=&quot;https://github.com/40m41h42t&quot;&gt;40m41h42t&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;校对者：&lt;a href=&quot;https://github.com/suhanyujie&quot;&gt;Samuel Jie&lt;/a&gt;、&lt;a href=&quot;https://github.com/todaycoder001&quot;&gt;dior&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;</summary>
+    
+    
+    
+    
+    <category term="掘金翻译计划" scheme="http://blog.qrzbing.cn/tags/%E6%8E%98%E9%87%91%E7%BF%BB%E8%AF%91%E8%AE%A1%E5%88%92/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Google CTF 2019 - Secure Boot 题解</title>
+    <link href="http://blog.qrzbing.cn/2019/07/22/googlectf2019-secureboot/"/>
+    <id>http://blog.qrzbing.cn/2019/07/22/googlectf2019-secureboot/</id>
+    <published>2019-07-22T13:47:32.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;题目说明&quot;&gt;&lt;a href=&quot;#题目说明&quot; class=&quot;headerlink&quot; title=&quot;题目说明&quot;&gt;&lt;/a&gt;题目说明&lt;/h1&gt;&lt;p&gt;Your task is very simple: just boot this machine. We tried before but we always get ‘Security Violation’. For extra fancyness use &lt;code&gt;socat -,raw,echo=0 tcp:$IP:$PORT&amp;#39;&lt;/code&gt;.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="pwn" scheme="http://blog.qrzbing.cn/tags/pwn/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>how2heap-5</title>
+    <link href="http://blog.qrzbing.cn/2019/07/19/how2heap-5/"/>
+    <id>http://blog.qrzbing.cn/2019/07/19/how2heap-5/</id>
+    <published>2019-07-19T15:17:18.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;how2heap-5&quot;&gt;&lt;a href=&quot;#how2heap-5&quot; class=&quot;headerlink&quot; title=&quot;how2heap - 5&quot;&gt;&lt;/a&gt;how2heap - 5&lt;/h1&gt;</summary>
+    
+    
+    
+    
+    <category term="pwn" scheme="http://blog.qrzbing.cn/tags/pwn/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>how2heap-4</title>
+    <link href="http://blog.qrzbing.cn/2019/07/10/how2heap-4/"/>
+    <id>http://blog.qrzbing.cn/2019/07/10/how2heap-4/</id>
+    <published>2019-07-09T17:38:28.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;how2heap-4&quot;&gt;&lt;a href=&quot;#how2heap-4&quot; class=&quot;headerlink&quot; title=&quot;how2heap-4&quot;&gt;&lt;/a&gt;how2heap-4&lt;/h1&gt;</summary>
+    
+    
+    
+    
+    <category term="pwn" scheme="http://blog.qrzbing.cn/tags/pwn/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>how2heap-3</title>
+    <link href="http://blog.qrzbing.cn/2019/07/09/how2heap-3/"/>
+    <id>http://blog.qrzbing.cn/2019/07/09/how2heap-3/</id>
+    <published>2019-07-09T13:56:05.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;how2heap-3&quot;&gt;&lt;a href=&quot;#how2heap-3&quot; class=&quot;headerlink&quot; title=&quot;how2heap-3&quot;&gt;&lt;/a&gt;how2heap-3&lt;/h1&gt;</summary>
+    
+    
+    
+    
+    <category term="pwn" scheme="http://blog.qrzbing.cn/tags/pwn/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>how2heap - 2</title>
+    <link href="http://blog.qrzbing.cn/2019/07/08/how2heap-2/"/>
+    <id>http://blog.qrzbing.cn/2019/07/08/how2heap-2/</id>
+    <published>2019-07-08T14:36:34.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;how2heap-2&quot;&gt;&lt;a href=&quot;#how2heap-2&quot; class=&quot;headerlink&quot; title=&quot;how2heap-2&quot;&gt;&lt;/a&gt;how2heap-2&lt;/h1&gt;</summary>
+    
+    
+    
+    
+    <category term="pwn" scheme="http://blog.qrzbing.cn/tags/pwn/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>how2heap - 1</title>
+    <link href="http://blog.qrzbing.cn/2019/07/08/how2heap-1/"/>
+    <id>http://blog.qrzbing.cn/2019/07/08/how2heap-1/</id>
+    <published>2019-07-08T09:01:37.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;how2heap-1&quot;&gt;&lt;a href=&quot;#how2heap-1&quot; class=&quot;headerlink&quot; title=&quot;how2heap - 1&quot;&gt;&lt;/a&gt;how2heap - 1&lt;/h1&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/shellphish/how2heap&quot;&gt;how2heap&lt;/a&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="pwn" scheme="http://blog.qrzbing.cn/tags/pwn/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>生产者消费者问题</title>
+    <link href="http://blog.qrzbing.cn/2019/06/17/%E7%BB%8F%E5%85%B8%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98/"/>
+    <id>http://blog.qrzbing.cn/2019/06/17/%E7%BB%8F%E5%85%B8%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98/</id>
+    <published>2019-06-17T14:56:08.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;这是一道经典的同步问题。我没有那么强大的直觉，只能一步一步分析了。&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>python导出依赖</title>
+    <link href="http://blog.qrzbing.cn/2019/06/17/python%E5%AF%BC%E5%87%BA%E4%BE%9D%E8%B5%96/"/>
+    <id>http://blog.qrzbing.cn/2019/06/17/python%E5%AF%BC%E5%87%BA%E4%BE%9D%E8%B5%96/</id>
+    <published>2019-06-16T16:27:23.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;最近在导出 Python 项目依赖的时候遇到了些小问题。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="水" scheme="http://blog.qrzbing.cn/tags/%E6%B0%B4/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>数据库中范式的概念</title>
+    <link href="http://blog.qrzbing.cn/2019/06/14/paradigm/"/>
+    <id>http://blog.qrzbing.cn/2019/06/14/paradigm/</id>
+    <published>2019-06-13T17:03:53.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;之前对范式了解了不深，好好整理一下。&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>网络安全课设</title>
+    <link href="http://blog.qrzbing.cn/2019/06/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E8%AF%BE%E8%AE%BE/"/>
+    <id>http://blog.qrzbing.cn/2019/06/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E8%AF%BE%E8%AE%BE/</id>
+    <published>2019-06-08T12:13:56.000Z</published>
+    <updated>2020-12-07T12:43:38.520Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;最近好像做了挺多事情，但是没有系统地整理输出。这几天做的网络安全课程设计还是挺好玩的，作业是做扫描器和嗅探器，在这个过程中学到了不少 socket 编程的知识（当然，仅限第一个实验）。&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>CISCN2019 strange_int 题解</title>
+    <link href="http://blog.qrzbing.cn/2019/04/27/CISCN2019-strange-int/"/>
+    <id>http://blog.qrzbing.cn/2019/04/27/CISCN2019-strange-int/</id>
+    <published>2019-04-27T11:42:33.000Z</published>
+    <updated>2020-12-07T12:43:38.512Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;这道题在做的时候完全不知道如何下手，我参考&lt;a href=&quot;https://www.52pojie.cn/thread-936377-1-1.html&quot;&gt;[CTF]（原创）第十二届全国大学生信息安全竞赛strange_int题解&lt;/a&gt;分析一波。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="CTF" scheme="http://blog.qrzbing.cn/categories/CTF/"/>
+    
+    
+    <category term="re" scheme="http://blog.qrzbing.cn/tags/re/"/>
+    
+    <category term="CTF" scheme="http://blog.qrzbing.cn/tags/CTF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>西湖论剑2019-re</title>
+    <link href="http://blog.qrzbing.cn/2019/04/10/WestLake2019-re/"/>
+    <id>http://blog.qrzbing.cn/2019/04/10/WestLake2019-re/</id>
+    <published>2019-04-10T02:07:02.000Z</published>
+    <updated>2020-12-07T12:43:38.512Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;清明节的时候参加了一下西湖论剑杯，我主要做了 re。其实这次的 re 并不难，但是比赛的时候心态炸了，没能静下心来做题。不过我也好久没做题了，趁着这次比赛整理一下思路。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="re" scheme="http://blog.qrzbing.cn/tags/re/"/>
+    
+    <category term="CTF" scheme="http://blog.qrzbing.cn/tags/CTF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linix驱动开发-萌新入门</title>
+    <link href="http://blog.qrzbing.cn/2019/02/20/arm-Linux-driver/"/>
+    <id>http://blog.qrzbing.cn/2019/02/20/arm-Linux-driver/</id>
+    <published>2019-02-20T07:41:34.000Z</published>
+    <updated>2020-12-07T12:43:38.512Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;上学期选了一门神奇的电工电子实习基础课，其实验要求做一些有趣的项目。我看他的选题里面有一个 Linux 驱动开发，询问老师后我将用树莓派做实验。在完成任务之前，我们应该首先了解一下怎样搭建起基础的环境并写一个最简单的驱动程序。&lt;/p&gt;</summary>
+    
+    
+    
+    
+  </entry>
+  
+</feed>

@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="西湖论剑2019-re"><meta name="keywords" content="re,CTF"><meta name="author" content="QRZ"><meta name="copyright" content="QRZ"><title>西湖论剑2019-re | QRZ's Blog</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?ff97cec996f09596dd444ef4dd5c925d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="dns-prefetch" href="https://www.google-analytics.com"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-131763109-1', 'auto');
+ga('send', 'pageview');</script><link rel="dns-prefetch" href="http://ta.qq.com"><script>(function() {
+   var hm = document.createElement("script");
+   hm.src = "https://tajs.qq.com/stats?sId=62826431";
+   var s = document.getElementsByTagName("script")[0];
+   s.parentNode.insertBefore(hm, s);
+ })();</script><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  hexoVersion: '5.2.0'
+} </script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="QRZ's Blog" type="application/atom+xml">
+</head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#easyCpp"><span class="toc-text">easyCpp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Testre"><span class="toc-text">Testre</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Junk-Instruction"><span class="toc-text">Junk_Instruction</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"></div><div class="author-info__name text-center">QRZ</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">34</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">14</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">7</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">QRZ's Blog</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a><a class="site-page" target="_blank" rel="noopener" href="https://wiki.qrzbing.cn">Wiki</a><a class="site-page" href="/about">About</a><a class="site-page" href="/music">Music</a><a class="site-page" href="/friends">Friends</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">西湖论剑2019-re</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-04-10</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>清明节的时候参加了一下西湖论剑杯，我主要做了 re。其实这次的 re 并不难，但是比赛的时候心态炸了，没能静下心来做题。不过我也好久没做题了，趁着这次比赛整理一下思路。</p>
+<a id="more"></a>
+
+<h1 id="easyCpp"><a href="#easyCpp" class="headerlink" title="easyCpp"></a>easyCpp</h1><p>这是一道比较基本的 Cpp 逆向。</p>
+<p>拖到 IDA 中看它的大概逻辑，处理后的 vector 和一个生成好的斐波那契数列进行比较。我们专注于它怎么处理输入就好啦。</p>
+<p>稍微整理了一下逻辑，大概是这样的：</p>
+<ul>
+<li><p>初始化输入的数组（input）和斐波那契数列</p>
+</li>
+<li><p>新建一个数列，我们可以称它为 global 数组。其中数据的初始化是这样的：</p>
+<ul>
+<li><p>首先 <code>push_back input[0]</code></p>
+</li>
+<li><p>从 <code>global[1]</code> 开始按照 <code>transform</code> 初始化数据，<code>transform</code> 有一个内联的 lambda，分析之后可以写成这个样子：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">transform(input.begin()+<span class="number">1</span>,input.end,back_insert(global),[](<span class="keyword">int</span> x)&#123;<span class="keyword">return</span> x+input[<span class="number">0</span>];&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>也就是说输入的第二个数开始和输入的第一个数求和然后塞到 <code>global</code> 中。</p>
+</li>
+</ul>
+</li>
+<li><p>接下来它用 <code>accumulate</code> 函数做了一个对换的操作，其结果是倒转了 <code>global</code> 数组。</p>
+<p>PS：这里我刚开始没搞懂是什么意思，这里分析一下还是蛮有意思的。STL 里的骚操作不要太多，我感觉我根本不会 C++。。</p>
+</li>
+<li><p>然后与之前初始化的斐波那契数列进行比较。</p>
+</li>
+<li><p>成功了，输出答案，这一段我就没分析了。</p>
+</li>
+</ul>
+<p>综上，输入为</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">987 -377 -610 -754 -843 -898 -932 -953 -966 -974 -979 -982 -984 -985 -986 -986</span><br></pre></td></tr></table></figure>
+
+<p>的时候答案正确，结果是：<code>flag&#123;987-377-843-953-979-985&#125;</code></p>
+<h1 id="Testre"><a href="#Testre" class="headerlink" title="Testre"></a>Testre</h1><p>这是一道水题，我上数据段直接看到了 base64 和 base58 的 table。然后它还有一个 <code>fake_secret_makes_you_annoyed</code>，和输入进行了轮异或，果然没什么用。它的比较字符串提出来再 base58 decode 就可以得到 <code>base58_is_boring</code>。</p>
+<p>当然了。。能够一眼看出来是十分重要的。可能需要总结一下常见加密/编码函数在逆向时出现的关键函数/关键字符串了。</p>
+<h1 id="Junk-Instruction"><a href="#Junk-Instruction" class="headerlink" title="Junk_Instruction"></a>Junk_Instruction</h1><p>一道 MFC 的逆向，输入 flag 然后检测，会弹出窗口。</p>
+<p>通过 Xspy 可以找到这里：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">OnCommand: notifycode&#x3D;0000 id&#x3D;03e9,func&#x3D; 0x00392420(Junk_Instruction.exe+ 0x002420 )</span><br></pre></td></tr></table></figure>
+
+<p>也就是弹窗函数的地址。我们在 IDA 中进入函数查看一下，地址就是 0x2420。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> ( sub_402600(v2 + <span class="number">16</span>) )</span><br><span class="line">  &#123;</span><br><span class="line">    sub_401BF0(&amp;v6, v3);</span><br><span class="line">    v7 = <span class="number">0</span>;</span><br><span class="line">    v9 = <span class="number">0</span>;</span><br><span class="line">    sub_403DC0(&amp;v6, <span class="number">129</span>, <span class="number">0</span>);</span><br><span class="line">    v6 = &amp;CCorrect::`vftable<span class="number">&#x27;</span>;</span><br><span class="line">    v16 = <span class="number">0</span>;</span><br><span class="line">    sub_40484E(&amp;v6);</span><br><span class="line">    v6 = &amp;CCorrect::`vftable<span class="number">&#x27;</span>;</span><br><span class="line">    v16 = <span class="number">2</span>;</span><br><span class="line">    sub_407B3B(&amp;v10);</span><br><span class="line">    LOBYTE(v16) = <span class="number">1</span>;</span><br><span class="line">    v8 = &amp;CBrush::`vftable<span class="number">&#x27;</span>;</span><br><span class="line">    sub_401580(&amp;v8);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后能看到判断函数的地址是 0x2600。</p>
+<p>接着进去看到一堆奇怪的东西。里面规定了输入的长度是 38。</p>
+<p>但是代码加花了，静态编译基本上看不出什么东西来。此时可以把花指令 patch 掉。</p>
+<p>仔细阅读汇编代码可以发现一些有趣的汇编，摘录如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.text:00402B6E                 call    $+5</span><br><span class="line">.text:00402B73                 pop     eax</span><br><span class="line">.text:00402B74                 mov     [ebp+var_28], eax</span><br><span class="line">.text:00402B77                 call    loc_402B7F</span><br><span class="line">.text:00402B77 ; ---------------------------------------------------------------------------</span><br><span class="line">.text:00402B7C                 db 0EAh, 0EBh, 9</span><br><span class="line">.text:00402B7F ; ---------------------------------------------------------------------------</span><br><span class="line">.text:00402B7F</span><br><span class="line">.text:00402B7F loc_402B7F:                             ; CODE XREF: sub_402AF0+87↑j</span><br><span class="line">.text:00402B7F                 pop     ebx</span><br><span class="line">.text:00402B80                 inc     ebx</span><br><span class="line">.text:00402B81                 push    ebx</span><br><span class="line">.text:00402B82                 mov     eax, 11111111h</span><br><span class="line">.text:00402B87                 retn</span><br><span class="line">.text:00402B88 ; ---------------------------------------------------------------------------</span><br><span class="line">.text:00402B88                 call    loc_402B94</span><br><span class="line">.text:00402B8D                 mov     ebx, 33333333h</span><br><span class="line">.text:00402B92                 jmp     short loc_402BA1</span><br><span class="line">.text:00402B94 ; ---------------------------------------------------------------------------</span><br><span class="line">.text:00402B94</span><br><span class="line">.text:00402B94 loc_402B94:                             ; CODE XREF: sub_402AF0+98↑p</span><br><span class="line">.text:00402B94                 mov     ebx, 11111111h</span><br><span class="line">.text:00402B99                 pop     ebx</span><br><span class="line">.text:00402B9A                 mov     ebx, offset loc_402BA1</span><br><span class="line">.text:00402B9F                 push    ebx</span><br><span class="line">.text:00402BA0                 retn</span><br><span class="line">.text:00402BA1 ; ---------------------------------------------------------------------------</span><br><span class="line">.text:00402BA1</span><br><span class="line">.text:00402BA1 loc_402BA1:                             ; CODE XREF: sub_402AF0+A2↑j</span><br><span class="line">.text:00402BA1                                         ; DATA XREF: sub_402AF0+AA↑o</span><br><span class="line">.text:00402BA1                 mov     ebx, 22222222h</span><br></pre></td></tr></table></figure>
+
+<p>基本上每一个带有 <code>JUMPOUT()</code> 的函数都会带上这么些个指令，我推测这一段指令就是万恶之源。我们可以用脚本 patch 掉它们。</p>
+<p>提取这一段的特征如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">E8 00 00 00 00 58 89 85 C4 FD FF FF E8 03 00 00</span><br><span class="line">00 EA EB 09 5B 43 53 B8 11 11 11 11 C3 E8 07 00</span><br><span class="line">00 00 BB 33 33 33 33 EB 0D BB 11 11 11 11 5B BB</span><br><span class="line">75 29 40 00 53 C3 BB 22 22 22 22</span><br></pre></td></tr></table></figure>
+
+<p>其开头以 <code>E8 00 00 00 00</code> 开始，结尾以 <code>22 22 22 22</code> 结束，长度为 59。</p>
+<p>接下来就可以 patch 掉了。</p>
+<p>然后整个世界都变了，相比于之前来说很轻松的就能看出来它的逻辑了。通过一次 Map 的初始化和一次运算最后就能得到 flag 了。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这次的比赛让我发现了自身的许多问题，有时间把 pwn 写一下吧。。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">QRZ</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://blog.qrzbing.cn/2019/04/10/WestLake2019-re/">http://blog.qrzbing.cn/2019/04/10/WestLake2019-re/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://blog.qrzbing.cn">QRZ's Blog</a>！</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/re/">re</a><a class="post-meta__tags" href="/tags/CTF/">CTF</a></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/04/27/CISCN2019-strange-int/"><i class="fa fa-chevron-left">  </i><span>CISCN2019 strange_int 题解</span></a></div><div class="next-post pull-right"><a href="/2019/02/20/arm-Linux-driver/"><span>Linix驱动开发-萌新入门</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'a28396a0fb37fdc22bce',
+  clientSecret: 'e2e4c983cd284773491d067c6055febad1c23689',
+  repo: '40m41h42t.github.io',
+  owner: '40m41h42t',
+  admin: '40m41h42t',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN'
+})
+gitalk.render('gitalk-container')</script></div></div><footer class="footer-bg" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div class="layout" id="footer"><div class="copyright">&copy;2018 - 2020 By QRZ</div><div class="framework-info"><span>驱动 - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  CommonHTML: {
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "HTML-CSS": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "SVG": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="data 段代码注入"><meta name="keywords" content=""><meta name="author" content="QRZ"><meta name="copyright" content="QRZ"><title>data 段代码注入 | QRZ's Blog</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?ff97cec996f09596dd444ef4dd5c925d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="dns-prefetch" href="https://www.google-analytics.com"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-131763109-1', 'auto');
+ga('send', 'pageview');</script><link rel="dns-prefetch" href="http://ta.qq.com"><script>(function() {
+   var hm = document.createElement("script");
+   hm.src = "https://tajs.qq.com/stats?sId=62826431";
+   var s = document.getElementsByTagName("script")[0];
+   s.parentNode.insertBefore(hm, s);
+ })();</script><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  hexoVersion: '5.2.0'
+} </script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="QRZ's Blog" type="application/atom+xml">
+</head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"></div><div class="author-info__name text-center">QRZ</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">34</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">14</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">7</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">QRZ's Blog</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a><a class="site-page" target="_blank" rel="noopener" href="https://wiki.qrzbing.cn">Wiki</a><a class="site-page" href="/about">About</a><a class="site-page" href="/music">Music</a><a class="site-page" href="/friends">Friends</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">data 段代码注入</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-04-18</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>我们可以通过向 data 段劫持代码并将程序的运行流劫持到这里实现我们希望的功能（包括执行恶意代码、软件保护等）。这一过程中可能是最复杂也是最重要的部分就是怎样将新增的代码注入到 data 段中了。</p>
+<a id="more"></a>
+
+<p>在运行的过程中 ELF 的内存布局如下图所示：<br><img src="https://qrzbbs.oss-cn-shanghai.aliyuncs.com/202004/Linux%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80.png" alt="Linux内存布局"></p>
+<p>二进制文件被映射到了 0x0804800 起始的地方。我们可以在 data 段上追加代码，由于 .bss 节在 data 段后面，我们需要预留出空间，否则 .bss 节在初始化的过程中会将我们插入的代码覆盖。当然我们也可以向 text 段之前插入代码，向 text 段前插入代码的方法叫做逆向 text 感染。</p>
+<p>接下来我们开始详细解析 ELF 的格式。</p>
+<p>ELF 的链接视图和执行视图如下图所示：<br><img src="https://qrzbbs.oss-cn-shanghai.aliyuncs.com/202004/%E9%93%BE%E6%8E%A5%E8%A7%86%E5%9B%BE%E5%92%8C%E6%89%A7%E8%A1%8C%E8%A7%86%E5%9B%BE.png" alt="链接视图和执行视图"><br>ELF 文件头的结构（Ehdr, ELF file header）如下所示：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">char</span>	e_ident[EI_NIDENT];	<span class="comment">/* Magic number and other info */</span></span><br><span class="line">  Elf64_Half	e_type;			<span class="comment">/* Object file type */</span></span><br><span class="line">  Elf64_Half	e_machine;		<span class="comment">/* Architecture */</span></span><br><span class="line">  Elf64_Word	e_version;		<span class="comment">/* Object file version */</span></span><br><span class="line">  Elf64_Addr	e_entry;		<span class="comment">/* Entry point virtual address */</span></span><br><span class="line">  Elf64_Off	e_phoff;		<span class="comment">/* Program header table file offset */</span></span><br><span class="line">  Elf64_Off	e_shoff;		<span class="comment">/* Section header table file offset */</span></span><br><span class="line">  Elf64_Word	e_flags;		<span class="comment">/* Processor-specific flags */</span></span><br><span class="line">  Elf64_Half	e_ehsize;		<span class="comment">/* ELF header size in bytes */</span></span><br><span class="line">  Elf64_Half	e_phentsize;		<span class="comment">/* Program header table entry size */</span></span><br><span class="line">  Elf64_Half	e_phnum;		<span class="comment">/* Program header table entry count */</span></span><br><span class="line">  Elf64_Half	e_shentsize;		<span class="comment">/* Section header table entry size */</span></span><br><span class="line">  Elf64_Half	e_shnum;		<span class="comment">/* Section header table entry count */</span></span><br><span class="line">  Elf64_Half	e_shstrndx;		<span class="comment">/* Section header string table index */</span></span><br><span class="line">&#125; Elf64_Ehdr;</span><br></pre></td></tr></table></figure>
+<p>我们可以通过 <code>e_phoff</code> 和 <code>e_shoff</code> 找到 Phdr 的位置和 Shdr 的位置。一般来说节头表（Shdr）在程序最后的位置，因此我们需要将节头表的偏移（<code>e_shoff</code>）扩大 <code>sizeof(parasite)</code> 个长度，也就是节头表后移。</p>
+<p>ELF 程序头（Phdr, Program segment header）是对二进制中段的描述，其结构如下所示：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  Elf64_Word	p_type;			<span class="comment">/* Segment type */</span></span><br><span class="line">  Elf64_Word	p_flags;		<span class="comment">/* Segment flags */</span></span><br><span class="line">  Elf64_Off	p_offset;		<span class="comment">/* Segment file offset */</span></span><br><span class="line">  Elf64_Addr	p_vaddr;		<span class="comment">/* Segment virtual address */</span></span><br><span class="line">  Elf64_Addr	p_paddr;		<span class="comment">/* Segment physical address */</span></span><br><span class="line">  Elf64_Xword	p_filesz;		<span class="comment">/* Segment size in file */</span></span><br><span class="line">  Elf64_Xword	p_memsz;		<span class="comment">/* Segment size in memory */</span></span><br><span class="line">  Elf64_Xword	p_align;		<span class="comment">/* Segment alignment */</span></span><br><span class="line">&#125; Elf64_Phdr;</span><br></pre></td></tr></table></figure>
+<p>可执行文件必然至少有一个 <code>p_type</code> 为 <code>PT_LOAD</code> 类型的段。text 段和 data 段的类型都是 <code>PT_LOAD</code>。一般情况下，text 段的偏移（<code>p_offset</code>）为 0 ，是可读可执行的（<code>p_flags = PF_X | PF_R</code>）而 data 段的不为 0，是可读可写的（<code>p_flags = PF_W | PF_R</code>），我们可以通过判断偏移来区分两个段。由于我们要扩展 data 段，这里需要修改其中的 <code>p_filesz</code> 和 <code>p_memsz</code>，分别是文件中的段大小和映射到内存中的段的大小。除此之外，由于我们需要执行 data 段上的代码，因此还需要设置 data 段的权限为可执行（<code>p_flags |= PF_X</code>）。</p>
+<p>由于 bss 段的位置位于程序的结尾，我们可以通过 data 段的 <code>p_offset + p_filesz</code> 定位到 bss 段的位置。</p>
+<p>ELF 的节头（Shdr, section header）是对程序执行过程中节的描述，它不是程序运行时必要的。但是如果没有节头确实会对 data 段注入造成一定的困扰。其结构如下所示：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  Elf64_Word	sh_name;		<span class="comment">/* Section name (string tbl index) */</span></span><br><span class="line">  Elf64_Word	sh_type;		<span class="comment">/* Section type */</span></span><br><span class="line">  Elf64_Xword	sh_flags;		<span class="comment">/* Section flags */</span></span><br><span class="line">  Elf64_Addr	sh_addr;		<span class="comment">/* Section virtual addr at execution */</span></span><br><span class="line">  Elf64_Off	sh_offset;		<span class="comment">/* Section file offset */</span></span><br><span class="line">  Elf64_Xword	sh_size;		<span class="comment">/* Section size in bytes */</span></span><br><span class="line">  Elf64_Word	sh_link;		<span class="comment">/* Link to another section */</span></span><br><span class="line">  Elf64_Word	sh_info;		<span class="comment">/* Additional section information */</span></span><br><span class="line">  Elf64_Xword	sh_addralign;		<span class="comment">/* Section alignment */</span></span><br><span class="line">  Elf64_Xword	sh_entsize;		<span class="comment">/* Entry size if section holds table */</span></span><br><span class="line">&#125; Elf64_Shdr;</span><br></pre></td></tr></table></figure>
+<p>我们需要对所有大于等于 .bss 地址的节后移，在文件中是 <code>sh_offset</code> 参数，在运行时是 <code>sh_addr</code> 参数。</p>
+<p>综上，注入算法已经很明确了：</p>
+<ol>
+<li><code>ehdr-&gt;e_shoff</code> 移动注入代码的长度</li>
+<li>定位到 data 段<ul>
+<li>扩大 <code>phdr-&gt;p_filesz</code></li>
+<li>扩大 <code>phdr-&gt;p_memsz</code></li>
+<li>修改 data 段的权限</li>
+</ul>
+</li>
+<li>修改 .bss 节及其后面的节的位置</li>
+</ol>
+<p>详细的代码可以参考<a target="_blank" rel="noopener" href="https://github.com/40m41h42t/data-infector">这里</a></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">QRZ</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://blog.qrzbing.cn/2020/04/18/data-infector/">http://blog.qrzbing.cn/2020/04/18/data-infector/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://blog.qrzbing.cn">QRZ's Blog</a>！</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="next-post pull-right"><a href="/2019/12/31/my-2019/"><span>我的 2019 总结</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'a28396a0fb37fdc22bce',
+  clientSecret: 'e2e4c983cd284773491d067c6055febad1c23689',
+  repo: '40m41h42t.github.io',
+  owner: '40m41h42t',
+  admin: '40m41h42t',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN'
+})
+gitalk.render('gitalk-container')</script></div></div><footer class="footer-bg" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div class="layout" id="footer"><div class="copyright">&copy;2018 - 2020 By QRZ</div><div class="framework-info"><span>驱动 - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  CommonHTML: {
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "HTML-CSS": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "SVG": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

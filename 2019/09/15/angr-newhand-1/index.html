@@ -1,0 +1,134 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="angr 入门（一）"><meta name="keywords" content="angr"><meta name="author" content="QRZ"><meta name="copyright" content="QRZ"><title>angr 入门（一） | QRZ's Blog</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?ff97cec996f09596dd444ef4dd5c925d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="dns-prefetch" href="https://www.google-analytics.com"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-131763109-1', 'auto');
+ga('send', 'pageview');</script><link rel="dns-prefetch" href="http://ta.qq.com"><script>(function() {
+   var hm = document.createElement("script");
+   hm.src = "https://tajs.qq.com/stats?sId=62826431";
+   var s = document.getElementsByTagName("script")[0];
+   s.parentNode.insertBefore(hm, s);
+ })();</script><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  hexoVersion: '5.2.0'
+} </script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="QRZ's Blog" type="application/atom+xml">
+</head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97"><span class="toc-text">安装指南</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#example"><span class="toc-text">example</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CFG%EF%BC%88Control-Flow-Graph%EF%BC%89"><span class="toc-text">CFG（Control Flow Graph）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Examples"><span class="toc-text">Examples</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DEFCAMP-r100"><span class="toc-text">DEFCAMP r100</span></a></li></ol></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"></div><div class="author-info__name text-center">QRZ</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">34</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">14</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">7</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">QRZ's Blog</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a><a class="site-page" target="_blank" rel="noopener" href="https://wiki.qrzbing.cn">Wiki</a><a class="site-page" href="/about">About</a><a class="site-page" href="/music">Music</a><a class="site-page" href="/friends">Friends</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">angr 入门（一）</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-09-15</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>让我们从官方文档走起。</p>
+<a id="more"></a>
+
+<h2 id="安装指南"><a href="#安装指南" class="headerlink" title="安装指南"></a>安装指南</h2><p>在 manjaro 上安装 angr 还算简单，我使用了 miniconda 作为 python 的虚拟环境。</p>
+<ul>
+<li>创建虚拟环境：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda create -n angr</span><br><span class="line">conda activate angr</span><br></pre></td></tr></table></figure>
+
+<p>接下来 <code>pip install angr</code> 即可</p>
+<p>中途会报一个有关 <code>psutil</code> 的错误，主要原因是缺少 python 头文件。网上有 Ubuntu/CentOS 中的解决办法，还没有在 Manjaro 中的。最简单的办法是 <code>conda install psutil</code>。</p>
+<p>接下来就可以很方便的 <code>import angr</code> 了。</p>
+<h4 id="example"><a href="#example" class="headerlink" title="example"></a>example</h4><p>安装完成后，我们用一个例子来跑一下：</p>
+<p>以 README 中的 Example 为例，</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">project = angr.Project(<span class="string">&quot;/home/qrz/GitHub/angr-doc/examples/defcamp_r100/r100&quot;</span>, auto_load_libs=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@project.hook(<span class="params"><span class="number">0x400844</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_flag</span>(<span class="params">state</span>):</span></span><br><span class="line">    print(<span class="string">&quot;FLAG SHOULD BE:&quot;</span>, state.posix.dumps(<span class="number">0</span>))</span><br><span class="line">    project.terminate_execution()</span><br><span class="line"></span><br><span class="line">project.execute()</span><br></pre></td></tr></table></figure>
+
+<p>我的运行结果为：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python test.py</span><br><span class="line">WARNING | 2019-09-11 22:55:38,077 | angr.state_plugins.symbolic_memory | The program is accessing memory or registers with an unspecified value. This could indicate unwanted behavior.</span><br><span class="line">WARNING | 2019-09-11 22:55:38,077 | angr.state_plugins.symbolic_memory | angr will cope with this by generating an unconstrained symbolic variable and continuing. You can resolve this by:</span><br><span class="line">WARNING | 2019-09-11 22:55:38,078 | angr.state_plugins.symbolic_memory | 1) setting a value to the initial state</span><br><span class="line">WARNING | 2019-09-11 22:55:38,078 | angr.state_plugins.symbolic_memory | 2) adding the state option ZERO_FILL_UNCONSTRAINED_&#123;MEMORY,REGISTERS&#125;, to make unknown regions hold null</span><br><span class="line">WARNING | 2019-09-11 22:55:38,078 | angr.state_plugins.symbolic_memory | 3) adding the state option SYMBOL_FILL_UNCONSTRAINED_&#123;MEMORY_REGISTERS&#125;, to suppress these messages.</span><br><span class="line">WARNING | 2019-09-11 22:55:38,078 | angr.state_plugins.symbolic_memory | Filling register r15 with 8 unconstrained bytes referenced from 0x400890 (PLT.ptrace+0x290 <span class="keyword">in</span> r100 (0x400890))</span><br><span class="line">WARNING | 2019-09-11 22:55:38,084 | angr.state_plugins.symbolic_memory | Filling register r14 with 8 unconstrained bytes referenced from 0x400895 (PLT.ptrace+0x295 <span class="keyword">in</span> r100 (0x400895))</span><br><span class="line">WARNING | 2019-09-11 22:55:38,087 | angr.state_plugins.symbolic_memory | Filling register r13 with 8 unconstrained bytes referenced from 0x40089a (PLT.ptrace+0x29a <span class="keyword">in</span> r100 (0x40089a))</span><br><span class="line">WARNING | 2019-09-11 22:55:38,089 | angr.state_plugins.symbolic_memory | Filling register r12 with 8 unconstrained bytes referenced from 0x40089f (PLT.ptrace+0x29f <span class="keyword">in</span> r100 (0x40089f))</span><br><span class="line">WARNING | 2019-09-11 22:55:38,097 | angr.state_plugins.symbolic_memory | Filling register rbx with 8 unconstrained bytes referenced from 0x4008b0 (PLT.ptrace+0x2b0 <span class="keyword">in</span> r100 (0x4008b0))</span><br><span class="line">WARNING | 2019-09-11 22:55:38,170 | angr.state_plugins.symbolic_memory | Filling register cc_ndep with 8 unconstrained bytes referenced from 0x400690 (PLT.ptrace+0x90 <span class="keyword">in</span> r100 (0x400690))</span><br><span class="line">FLAG SHOULD BE: b<span class="string">&#x27;Code_Talkers\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\xf5\x00&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们看到，它 hook 在了 0x400844 处。</p>
+<p>这一处地址的指令为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.text:0000000000400844                 mov     edi, offset s   ; &quot;Nice!&quot;</span><br></pre></td></tr></table></figure>
+
+<p>也就是得到正确答案所需要的程序流。</p>
+<p>正常做的话，会进入一个处理函数：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">signed</span> __int64 __fastcall <span class="title">sub_4006FD</span><span class="params">(<span class="keyword">char</span> *s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> i; <span class="comment">// [rsp+14h] [rbp-24h]</span></span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *v3; <span class="comment">// [rsp+18h] [rbp-20h]</span></span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *v4; <span class="comment">// [rsp+20h] [rbp-18h]</span></span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span> *v5; <span class="comment">// [rsp+28h] [rbp-10h]</span></span><br><span class="line"></span><br><span class="line">  v3 = <span class="string">&quot;Dufhbmf&quot;</span>;</span><br><span class="line">  v4 = <span class="string">&quot;pG`imos&quot;</span>;</span><br><span class="line">  v5 = <span class="string">&quot;ewUglpt&quot;</span>;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">11</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( (&amp;v3)[i % <span class="number">3</span>][<span class="number">2</span> * (i / <span class="number">3</span>)] - s[i] != <span class="number">1</span> )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">1L</span>L;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们的输入需要让这个函数返回 0。详细做法我就不展开了。</p>
+<p>接下来，我们看一下 example 中体现的基础用法吧。</p>
+<h2 id="CFG（Control-Flow-Graph）"><a href="#CFG（Control-Flow-Graph）" class="headerlink" title="CFG（Control Flow Graph）"></a>CFG（Control Flow Graph）</h2><p>在官方提供的<a target="_blank" rel="noopener" href="https://docs.angr.io/built-in-analyses/cfg">文档</a>中，很难直接看控制流程图，想要查看的话可以按照这种<a target="_blank" rel="noopener" href="https://github.com/axt/angr-utils">方法</a>。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>实际上按照他的方法安装之后可能还会出现下面的问题：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FileNotFoundError: [Errno 2] No such file or directory: <span class="string">&#x27;dot&#x27;</span>: <span class="string">&#x27;dot&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>经检查是缺少相关的包，我们用 conda 来安装就好了</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">conda install pydot</span><br></pre></td></tr></table></figure>
+
+<p>之后就可以正常跑他的样例了。</p>
+<p>样例脚本：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"><span class="keyword">from</span> angrutils <span class="keyword">import</span> *</span><br><span class="line">proj = angr.Project(<span class="string">&quot;./ais3_crackme&quot;</span>, load_options=&#123;<span class="string">&#x27;auto_load_libs&#x27;</span>:<span class="literal">False</span>&#125;)</span><br><span class="line">main = proj.loader.main_object.get_symbol(<span class="string">&quot;main&quot;</span>)</span><br><span class="line">start_state = proj.factory.blank_state(addr=main.rebased_addr)</span><br><span class="line">cfg = proj.analyses.CFGEmulated(fail_fast=<span class="literal">True</span>, starts=[main.rebased_addr], initial_state=start_state)</span><br><span class="line">plot_cfg(cfg, <span class="string">&quot;ais3_cfg&quot;</span>, asminst=<span class="literal">True</span>, remove_imports=<span class="literal">True</span>, remove_path_terminator=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>跑出来的结果如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/CFG_example_ais3_cfg.png" alt="A simple CFG" title="CFG Image"></p>
+<p>如果我们用 IDA 来看 CFG 的话能得到一个类似的结果：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/CFG_BY_IDA_ais3_cfg.png" alt="CFG BY IDA"></p>
+<p>对比的话能看出来 IDA 的内容更加优雅。</p>
+<p>不过按照<a target="_blank" rel="noopener" href="https://docs.angr.io/introductory-errata/faq">文档的 FAQ</a>，angr 的 CFG 与 IDA 的 CFG 不同之处在于：</p>
+<ul>
+<li>angr 会拆分 IDA 不会在函数调用时拆分的基本块，因为 angr 认为它们是控制流的一种形式，基本块以控制流指令结束。通过函数属性的 <code>.supergraph</code> 可以生成 IDA 风格的 CFG。</li>
+<li>如果另一个块跳到一个基本块中间，IDA 会拆分这个基本块，IDA 称其为基本块的标准化，而 angr 默认不会这么做，因为大多数静态分析不需要它。想要开启它的话可以将 <code>normalize = True</code><br>传递给 CFG。</li>
+</ul>
+<h2 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h2><p>我们根据某些实际的<a target="_blank" rel="noopener" href="https://docs.angr.io/examples">例子</a>来学习 angr。</p>
+<h3 id="DEFCAMP-r100"><a href="#DEFCAMP-r100" class="headerlink" title="DEFCAMP r100"></a>DEFCAMP r100</h3><p>首先还是以 example 中的 defcamp_r100 为例。</p>
+<p>它的输入要求为：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">fgets(&amp;s, <span class="number">255</span>, <span class="built_in">stdin</span>);</span><br></pre></td></tr></table></figure>
+
+<p>因此 solve 脚本中的约束条件并不严格。</p>
+<p>官方做测试的约束是：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">project = angr.Project(<span class="string">&quot;/home/qrz/GitHub/angr-doc/examples/defcamp_r100/r100&quot;</span>, auto_load_libs=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@project.hook(<span class="params"><span class="number">0x400844</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_flag</span>(<span class="params">state</span>):</span></span><br><span class="line">    print(<span class="string">&quot;FLAG SHOULD BE:&quot;</span>, state.posix.dumps(<span class="number">0</span>))</span><br><span class="line">    project.terminate_execution()</span><br><span class="line"></span><br><span class="line">project.execute()</span><br></pre></td></tr></table></figure>
+
+<p>其中，这里用到了 <code>angr.Project()</code>，这个 Project 是一个类，里面是各项加载参数。</p>
+<p>接下来 hook 了 0x400844 这个地址，当符号执行流程进入到这个地址时，输出 stdin 的内容，接下来停止符号执行。</p>
+<p>接下来我们分析一下它给的 <code>solve.py</code>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span>():</span></span><br><span class="line">    p = angr.Project(<span class="string">&quot;r100&quot;</span>)</span><br><span class="line">    simgr = p.factory.simulation_manager(p.factory.full_init_state())</span><br><span class="line">    simgr.explore(find=<span class="number">0x400844</span>, avoid=<span class="number">0x400855</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> simgr.found[<span class="number">0</span>].posix.dumps(<span class="number">0</span>).strip(<span class="string">b&#x27;\0\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>():</span></span><br><span class="line">    <span class="keyword">assert</span> main().startswith(<span class="string">b&#x27;Code_Talkers&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    print(main())</span><br></pre></td></tr></table></figure>
+
+<p>这里用了不同的方法，它构造了一个模拟管理器，以 <code>full_init_state</code> 为初始参数。</p>
+<p><code>find</code> 参数下的 <code>0x400844</code> 和上面的 hook 一样，都是我们想要找的位置，要避免的地址位于 <code>0x400855</code>，也就是</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.text:0000000000400855                 mov     edi, offset aIncorrectPassw ; &quot;Incorrect password!&quot;</span><br></pre></td></tr></table></figure>
+
+<p>这个错误的分支。</p>
+<p>可以看出，我们使用 angr 就是要通过约束条件使程序运行到正确的分支，避免错误的分支。如何让约束优雅地进行是比较困难的。angr 使用 claripy 作为 z3 的简单前端，我们也要掌握一部分其用法。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">QRZ</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://blog.qrzbing.cn/2019/09/15/angr-newhand-1/">http://blog.qrzbing.cn/2019/09/15/angr-newhand-1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://blog.qrzbing.cn">QRZ's Blog</a>！</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/angr/">angr</a></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/09/30/angr-newhand-2/"><i class="fa fa-chevron-left">  </i><span>angr 入门（二）</span></a></div><div class="next-post pull-right"><a href="/2019/08/25/learning-parser-combinators-with-rust-4/"><span>【译】通过 Rust 学习解析器组合器 — 第四部分</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'a28396a0fb37fdc22bce',
+  clientSecret: 'e2e4c983cd284773491d067c6055febad1c23689',
+  repo: '40m41h42t.github.io',
+  owner: '40m41h42t',
+  admin: '40m41h42t',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN'
+})
+gitalk.render('gitalk-container')</script></div></div><footer class="footer-bg" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div class="layout" id="footer"><div class="copyright">&copy;2018 - 2020 By QRZ</div><div class="framework-info"><span>驱动 - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  CommonHTML: {
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "HTML-CSS": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "SVG": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

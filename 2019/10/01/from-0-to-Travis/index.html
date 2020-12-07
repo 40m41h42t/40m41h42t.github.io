@@ -1,0 +1,90 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="使用 Travis CI 自动部署 Hexo 博客"><meta name="keywords" content="blog,travis"><meta name="author" content="QRZ"><meta name="copyright" content="QRZ"><title>使用 Travis CI 自动部署 Hexo 博客 | QRZ's Blog</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?ff97cec996f09596dd444ef4dd5c925d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="dns-prefetch" href="https://www.google-analytics.com"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-131763109-1', 'auto');
+ga('send', 'pageview');</script><link rel="dns-prefetch" href="http://ta.qq.com"><script>(function() {
+   var hm = document.createElement("script");
+   hm.src = "https://tajs.qq.com/stats?sId=62826431";
+   var s = document.getElementsByTagName("script")[0];
+   s.parentNode.insertBefore(hm, s);
+ })();</script><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  hexoVersion: '5.2.0'
+} </script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="QRZ's Blog" type="application/atom+xml">
+</head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-text">参考文章</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"></div><div class="author-info__name text-center">QRZ</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">34</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">14</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">7</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">QRZ's Blog</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a><a class="site-page" target="_blank" rel="noopener" href="https://wiki.qrzbing.cn">Wiki</a><a class="site-page" href="/about">About</a><a class="site-page" href="/music">Music</a><a class="site-page" href="/friends">Friends</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">使用 Travis CI 自动部署 Hexo 博客</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-01</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>最近一直在 Manjaro 和 Windows 之间切换，现在学习都已经在 Manjaro 上进行了，但是博客还在 Windows 上。虽然迁移过来并不难，但还是太麻烦了。另外写博客还要开电脑，的确有点麻烦。作为一个懒人当然是动动手自动推送最好，我就想到了用 <a target="_blank" rel="noopener" href="https://travis-ci.org/">Travis CI</a> 来自动部署博客。</p>
+<a id="more"></a>
+
+<p>本地先通过如下流程建立一个基本的 Hexo 博客文件夹：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+
+<p>接下来用之前博客根目录下的 <code>_config.yml</code> 替换掉这个博客根目录下的。</p>
+<p>接着将 <code>source/</code> 目录替换掉。</p>
+<p>我使用了 <a target="_blank" rel="noopener" href="https://github.com/Molunerfinn">Molunerfinn</a> 的 <a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody">hexo-theme-melody</a> 主题，它用了 <a target="_blank" rel="noopener" href="https://hexo.io/docs/data-files.html">data files</a> 特性，因此我不必修改 clone 下来的主题文件。</p>
+<p>这样就有一个比较纯净的博客了。实际上这个目录下是自带 <code>.gitignore</code> 的，我们在根目录下 <code>git init</code>，配置相关的 remote 和 branch 即可。</p>
+<p>接下来在根目录下新建一个 <code>.travis.yml</code> 的文件，我们就可以开始配置 Travis 了。</p>
+<p>参考配置：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 语言环境</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">node_js</span></span><br><span class="line"><span class="attr">node_js:</span> <span class="string">stable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加缓存</span></span><br><span class="line"><span class="attr">cache:</span></span><br><span class="line">  <span class="attr">directories:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">node_modules</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 只检测 blog-source 上的代码提交</span></span><br><span class="line"><span class="attr">branches:</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">blog-source</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># install hexo &amp; clone theme</span></span><br><span class="line"><span class="attr">before_install:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">export</span> <span class="string">TZ=&#x27;Asia/Shanghai&#x27;</span> <span class="comment"># Set Timezone</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-cli</span> <span class="string">-g</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">clone</span> <span class="string">-b</span> <span class="string">dev</span> <span class="string">https://github.com/Molunerfinn/hexo-theme-melody</span> <span class="string">themes/melody</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Start: Build Lifecycle</span></span><br><span class="line"><span class="attr">install:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-renderer-jade</span> <span class="string">hexo-renderer-stylus</span> <span class="string">--save</span> <span class="comment"># medoly 主题需要的插件</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-deployer-git</span> <span class="string">--save</span> <span class="comment"># git 部署</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-generator-feed</span> <span class="comment"># RSS generate</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行清缓存，生成网页操作</span></span><br><span class="line"><span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">clean</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">generate</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置git提交名，邮箱；替换真实token到_config.yml文件，最后depoy部署</span></span><br><span class="line"><span class="attr">after_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">config</span> <span class="string">user.name</span> <span class="string">&quot;Quartz&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">config</span> <span class="string">user.email</span> <span class="string">&quot;ikav.css@gmail.com&quot;</span></span><br><span class="line">  <span class="comment"># 替换同目录下的_config.yml文件中gh_token字符串为travis后台刚才配置的变量，注意此处sed命令用了双引号。单引号无效！</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">sed</span> <span class="string">-i</span> <span class="string">&quot;s/gh_token/$&#123;GH_TOKEN&#125;/g&quot;</span> <span class="string">./_config.yml</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">deploy</span></span><br><span class="line"><span class="comment"># End: Build LifeCycle</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，最后部署的时候我们需要输入这样的一个敏感信息。它的生成方式也比较简单：在 <a target="_blank" rel="noopener" href="https://github.com/settings/tokens">GitHub</a> 生成一个新 token，然后在 <a target="_blank" rel="noopener" href="https://travis-ci.org/account/repositories">Travis</a> 相关设置的环境变量（Environment Variables）中设置 <code>GH_TOKEN</code>（以及其他你想要的环境变量）即可。</p>
+<p>之后推送一下就可以发现成功啦。以后想要写博客、改博客也没有必要抱着电脑，只要能联网就可以随便写了。除此之外我把图床也放在了 GitHub 上，还真是充分利用了 GitHub 的网盘和笔记功能啊（逃</p>
+<p>除此之外，我们从项目右侧的图标中获取链接，查看生成状态。</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">[<span class="string">![Build Status</span>](<span class="link">https://travis-ci.org/40m41h42t/40m41h42t.github.io.svg?branch=blog-source</span>)](<span class="link">https://travis-ci.org/40m41h42t/40m41h42t.github.io</span>)</span><br></pre></td></tr></table></figure>
+
+<p>效果如下：</p>
+<p><a target="_blank" rel="noopener" href="https://travis-ci.org/40m41h42t/40m41h42t.github.io"><img src="https://travis-ci.org/40m41h42t/40m41h42t.github.io.svg?branch=blog-source" alt="Build Status"></a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://kchen.cc/2016/11/12/hexo-instructions/">Travis CI 持续集成</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/5a1fa30c6fb9a045263b5d2a">Hexo 遇上 Travis-CI：可能是最通俗易懂的自动发布博客图文教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://hjptriplebee.github.io/Travis%E4%B8%8ECodecov%E5%85%A5%E9%97%A8.html/">Github美化-Travis与Codecov入门</a></p>
+<p><a target="_blank" rel="noopener" href="https://qinyuanpei.github.io/posts/3521618732/">持续集成在Hexo自动化部署上的实践</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.itfanr.cc/2017/08/09/using-travis-ci-automatic-deploy-hexo-blogs/">使用Travis CI自动部署Hexo博客</a></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">QRZ</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://blog.qrzbing.cn/2019/10/01/from-0-to-Travis/">http://blog.qrzbing.cn/2019/10/01/from-0-to-Travis/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://blog.qrzbing.cn">QRZ's Blog</a>！</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/blog/">blog</a><a class="post-meta__tags" href="/tags/travis/">travis</a></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/10/04/angr-newhand-3/"><i class="fa fa-chevron-left">  </i><span>angr 入门（三）</span></a></div><div class="next-post pull-right"><a href="/2019/09/30/angr-newhand-2/"><span>angr 入门（二）</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'a28396a0fb37fdc22bce',
+  clientSecret: 'e2e4c983cd284773491d067c6055febad1c23689',
+  repo: '40m41h42t.github.io',
+  owner: '40m41h42t',
+  admin: '40m41h42t',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN'
+})
+gitalk.render('gitalk-container')</script></div></div><footer class="footer-bg" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div class="layout" id="footer"><div class="copyright">&copy;2018 - 2020 By QRZ</div><div class="framework-info"><span>驱动 - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  CommonHTML: {
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "HTML-CSS": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "SVG": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

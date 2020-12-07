@@ -1,0 +1,144 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="网络安全课设"><meta name="keywords" content=""><meta name="author" content="QRZ"><meta name="copyright" content="QRZ"><title>网络安全课设 | QRZ's Blog</title><link rel="shortcut icon" href="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"><link rel="stylesheet" href="/css/index.css?version=1.9.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.9.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?ff97cec996f09596dd444ef4dd5c925d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="dns-prefetch" href="https://www.google-analytics.com"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-131763109-1', 'auto');
+ga('send', 'pageview');</script><link rel="dns-prefetch" href="http://ta.qq.com"><script>(function() {
+   var hm = document.createElement("script");
+   hm.src = "https://tajs.qq.com/stats?sId=62826431";
+   var s = document.getElementsByTagName("script")[0];
+   s.parentNode.insertBefore(hm, s);
+ })();</script><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  hexoVersion: '5.2.0'
+} </script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="QRZ's Blog" type="application/atom+xml">
+</head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Scanner"><span class="toc-text">Scanner</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sniffer"><span class="toc-text">Sniffer</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/IMG_20190923_132425.png"></div><div class="author-info__name text-center">QRZ</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">34</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">14</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">7</span></a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">QRZ's Blog</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a><a class="site-page" target="_blank" rel="noopener" href="https://wiki.qrzbing.cn">Wiki</a><a class="site-page" href="/about">About</a><a class="site-page" href="/music">Music</a><a class="site-page" href="/friends">Friends</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">网络安全课设</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-06-08</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><p>最近好像做了挺多事情，但是没有系统地整理输出。这几天做的网络安全课程设计还是挺好玩的，作业是做扫描器和嗅探器，在这个过程中学到了不少 socket 编程的知识（当然，仅限第一个实验）。</p>
+<a id="more"></a>
+
+<p>具体的代码位于 <a target="_blank" rel="noopener" href="https://github.com/40m41h42t/NUAA-CyberSec">https://github.com/40m41h42t/NUAA-CyberSec</a> ，代码写的很丑。在写的过程中有过一些酷炫的想法，然而随着 deadline 的到来只能 Keep it simple, stupid。具体的感受如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/img1559996505424.jpeg" alt=""></p>
+<p>在这个过程中算是大概了解了计算机网络编程的知识。</p>
+<h2 id="Scanner"><a href="#Scanner" class="headerlink" title="Scanner"></a>Scanner</h2><p>扫描器的要求如下：</p>
+<blockquote>
+<p>Scanner 简单网络扫描程序实现</p>
+<ul>
+<li><p>实验目的：熟悉并实现网络扫描的基本原理，了解网络扫描的几种常用的方法。</p>
+</li>
+<li><p>实验环境：Linux，C 语言</p>
+</li>
+<li><p>实验内容：</p>
+<p>用 C 语言编写一个在 Linux 下扫描局域网内主机的程序。要求可以显示局域网内的主机名列表，并可以显示哪些主机开放了哪些端口。</p>
+</li>
+</ul>
+</blockquote>
+<p>最著名的扫描器应该是 <a target="_blank" rel="noopener" href="https://nmap.org/">nmap</a> 无疑了。我参考了它扫描的方法来完成自己的扫描器。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.1.1/24</span><br></pre></td></tr></table></figure>
+
+<p>可以用 TCP SYN 的方法扫描该网段的 IP。在扫描的过程中抓包，我们就可以轻松看到 nmap 发包的过程。</p>
+<ul>
+<li>扫描局域网内主机可以通过发送接收 ARP 报文来实现。</li>
+<li>显示局域网内的主机名列表可以通过 DNS 报文实现。</li>
+<li>显示哪些主机开放了哪些端口可以通过 TCP SYN 扫描实现。</li>
+</ul>
+<p>然而，对于我这种菜鸡来说，虽然梦想是美好的，写起代码的时候就会感觉各种坑爹。。</p>
+<p>整个扫描器的设计如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06scanner2.png" alt=""></p>
+<p>初始化网络信息会从设定的网卡编号中得到网络信息，其实 socket 编程也并不难，重要的是理解各个层级之间的关系。不过对我这种习惯了写 Python 的萌新来说，C 的各种定义真是让人头大。。在得到本机当前网卡的 IP 和子网掩码之后，我们就可以得到整个内网的网段了。接下来就是发送并接收 ARP 报文，获取内网的存活主机。</p>
+<p>扫描存活主机的设计如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/scanner3.png" alt=""></p>
+<p>嗯。。父进程（也就是自己）接收 ARP 报文，子进程发送 ARP 报文，其实可以开线程的。</p>
+<p>ARP 报文的格式如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/wiki/network/arp-1.png" alt=""></p>
+<p>构造 ARP 报文花了我不少时间，中文的资料太坑爹了。。</p>
+<p>接收的时候，问题出现了，怎么样才能确定所有回复的 ARP 报文都被接收了呢？我有几种想法：</p>
+<ul>
+<li>首先，增大发送 ARP 包的间隔，让父进程能收到所有的报文。</li>
+<li>其次，可以发送多次请求，最后整理排序即可。</li>
+<li>除此之外，设定接收 ARP 的超时时间为 5s，这样可以避免无限收包的死循环。</li>
+</ul>
+<p>当然我的方法就很菜了。。如果直接用 time.h 中的时间结构体的话，在计算时间获取时间上会消耗大量时间，设定为 5s，最后跑起来可能就 6、7s 了，有时候不知道为什么还会卡住，消耗了大量时间却没有获取到所有的流量包。于是我改用 <code>alarm</code> 函数设定时间，用 <code>setjmp</code> 跳回父函数，简直是不能再窒息的方法，不知道有没有什么更好的设定计时器跳出循环的办法。。</p>
+<p>接下来要获取主机名称，查找的时候发现有一个神奇的函数叫 <code>gethostbyaddr</code>，完全不用自己构造报文，太舒服了。。</p>
+<p>最后本应该实现 TCP SYN 扫描的，但是由于我之前多次咕咕咕的原因到了 ddl，于是我只好换了一种比较简单（？）的 TCP connect 方法。</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/scanner4.png" alt=""></p>
+<p>呜呜呜其实是照着大白学长的来写了，以后有时间（咕咕咕）再加上 TCP SYN 的扫描吧，我已经留好接口了，就差实现了！咕咕咕</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">ScannerThread</span><span class="params">(<span class="keyword">void</span> *args)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ScanArgs *p = (ScanArgs *)args;</span><br><span class="line">    p-&gt;result = SYNScan(p-&gt;ip, p-&gt;port);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Sniffer"><a href="#Sniffer" class="headerlink" title="Sniffer"></a>Sniffer</h2><p>嗅探器的要求如下：</p>
+<blockquote>
+<p>网络嗅探器</p>
+<ul>
+<li>实验目的：熟悉并实现网络监听的基本原理</li>
+<li>实验环境：Linux/Windows，C 语言</li>
+<li>实验内容：<ul>
+<li>用 C 语言编写一个监听网络流量的程序，并对截取的报文进行解析，</li>
+</ul>
+</li>
+<li>实验结果<ul>
+<li>提交实验报告</li>
+<li>作为后续信息安全综合实验的基础</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>这个本来也应该用 <code>socket</code> 来写的，读取原始套接字，解析二层 MAC，三层 IP，以及之后的 TCP/UDP 等协议的。有一张图片可以画出各个网络层之间的关系：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/wiki/network/model1.png" alt=""></p>
+<p>但是随着 DDL 的临近，我发现了 <code>libpcap</code> 库。。于是一切都变得简单了起来 &lt;- 一个造轮子失败的人QAQ</p>
+<p>对于 <code>libpacp</code> 库，<a target="_blank" rel="noopener" href="http://www.tcpdump.org/pcap.html">Programming with pcap</a> 把所有用到的嗅探器需要的方法都告诉我了，我甚至可以直接用上面的代码。。。理解第一，理解万岁.jpg。于是 Sniffer 只花了一小会就写完了。。</p>
+<p>其结构如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/sniffer3.png" alt=""></p>
+<p>其实我也是想解析其他报文的，不过果然咕咕咕是最舒服的（</p>
+<p><code>pcap_loop</code> 函数已经把我们所有需要做的工作封装好了。我们在函数中可以通过最后一个参数得到所有的报文信息，然后再按照上面的文档解析报文。我只解析了三种协议，从以太网的 Ethernet 头部就不说了，只有 <code>MAC_dst</code>、<code>MAC_src</code>、<code>ether_type</code> 三个变量。IP 和 TCP 的报头分别为：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/wiki/network/ipv4-1.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/wiki/network/tcp-1.png" alt=""></p>
+<p>嗯，上面的都是我闲的无聊的时候画的。。有画的时间写点代码多好。。</p>
+<p>所以最后感觉也没做什么工作，要实在说是有的话算是加深了一点点对计网的理解？唔，大概就是这样，又水了一篇博客。。</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">QRZ</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://blog.qrzbing.cn/2019/06/08/网络安全课设/">http://blog.qrzbing.cn/2019/06/08/网络安全课设/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://blog.qrzbing.cn">QRZ's Blog</a>！</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/06/14/paradigm/"><i class="fa fa-chevron-left">  </i><span>数据库中范式的概念</span></a></div><div class="next-post pull-right"><a href="/2019/04/27/CISCN2019-strange-int/"><span>CISCN2019 strange_int 题解</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: 'a28396a0fb37fdc22bce',
+  clientSecret: 'e2e4c983cd284773491d067c6055febad1c23689',
+  repo: '40m41h42t.github.io',
+  owner: '40m41h42t',
+  admin: '40m41h42t',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN'
+})
+gitalk.render('gitalk-container')</script></div></div><footer class="footer-bg" style="background-image: url(https://raw.githubusercontent.com/40m41h42t/Images/master/2019/09/866283.png)"><div class="layout" id="footer"><div class="copyright">&copy;2018 - 2020 By QRZ</div><div class="framework-info"><span>驱动 - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.0"></script><script src="/js/fancybox.js?version=1.9.0"></script><script src="/js/sidebar.js?version=1.9.0"></script><script src="/js/copy.js?version=1.9.0"></script><script src="/js/fireworks.js?version=1.9.0"></script><script src="/js/transition.js?version=1.9.0"></script><script src="/js/scroll.js?version=1.9.0"></script><script src="/js/head.js?version=1.9.0"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  CommonHTML: {
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "HTML-CSS": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "SVG": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>
