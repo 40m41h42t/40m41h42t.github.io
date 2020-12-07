@@ -21,7 +21,8 @@ before_install:
 # Start: Build Lifecycle
 install:
   - npm install
-  - npm install hexo-renderer-jade hexo-renderer-stylus --save # medoly 主题需要的插件
+  - npm install hexo-theme-melody
+  - npm install hexo-renderer-pug hexo-renderer-stylus --save # medoly 主题需要的插件
   - npm install hexo-deployer-git --save # git 部署
   - npm install hexo-generator-feed # RSS generate
 
