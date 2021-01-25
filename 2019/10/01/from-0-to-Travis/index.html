@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="使用 Travis CI 自动部署 Hexo 博客"/><meta name="keywords" content="blog, travis, QRZ's Blog" /><link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/2019/10/01/from-0-to-Travis/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>使用 Travis CI 自动部署 Hexo 博客 - QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">使用 Travis CI 自动部署 Hexo 博客
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-10-01
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-text">参考文章</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>最近一直在 Manjaro 和 Windows 之间切换，现在学习都已经在 Manjaro 上进行了，但是博客还在 Windows 上。虽然迁移过来并不难，但还是太麻烦了。另外写博客还要开电脑，的确有点麻烦。作为一个懒人当然是动动手自动推送最好，我就想到了用 <a target="_blank" rel="noopener" href="https://travis-ci.org/">Travis CI</a> 来自动部署博客。</p>
+<a id="more"></a>
+
+<p>本地先通过如下流程建立一个基本的 Hexo 博客文件夹：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+<p>接下来用之前博客根目录下的 <code>_config.yml</code> 替换掉这个博客根目录下的。</p>
+<p>接着将 <code>source/</code> 目录替换掉。</p>
+<p>我使用了 <a target="_blank" rel="noopener" href="https://github.com/Molunerfinn">Molunerfinn</a> 的 <a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody">hexo-theme-melody</a> 主题，它用了 <a target="_blank" rel="noopener" href="https://hexo.io/docs/data-files.html">data files</a> 特性，因此我不必修改 clone 下来的主题文件。</p>
+<p>这样就有一个比较纯净的博客了。实际上这个目录下是自带 <code>.gitignore</code> 的，我们在根目录下 <code>git init</code>，配置相关的 remote 和 branch 即可。</p>
+<p>接下来在根目录下新建一个 <code>.travis.yml</code> 的文件，我们就可以开始配置 Travis 了。</p>
+<p>参考配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 语言环境</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">node_js</span></span><br><span class="line"><span class="attr">node_js:</span> <span class="string">stable</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加缓存</span></span><br><span class="line"><span class="attr">cache:</span></span><br><span class="line">  <span class="attr">directories:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">node_modules</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 只检测 blog-source 上的代码提交</span></span><br><span class="line"><span class="attr">branches:</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">blog-source</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># install hexo &amp; clone theme</span></span><br><span class="line"><span class="attr">before_install:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">export</span> <span class="string">TZ=&#x27;Asia/Shanghai&#x27;</span> <span class="comment"># Set Timezone</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-cli</span> <span class="string">-g</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">clone</span> <span class="string">-b</span> <span class="string">dev</span> <span class="string">https://github.com/Molunerfinn/hexo-theme-melody</span> <span class="string">themes/melody</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Start: Build Lifecycle</span></span><br><span class="line"><span class="attr">install:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-renderer-jade</span> <span class="string">hexo-renderer-stylus</span> <span class="string">--save</span> <span class="comment"># medoly 主题需要的插件</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-deployer-git</span> <span class="string">--save</span> <span class="comment"># git 部署</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span> <span class="string">hexo-generator-feed</span> <span class="comment"># RSS generate</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行清缓存，生成网页操作</span></span><br><span class="line"><span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">clean</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">generate</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置git提交名，邮箱；替换真实token到_config.yml文件，最后depoy部署</span></span><br><span class="line"><span class="attr">after_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">config</span> <span class="string">user.name</span> <span class="string">&quot;Quartz&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">git</span> <span class="string">config</span> <span class="string">user.email</span> <span class="string">&quot;ikav.css@gmail.com&quot;</span></span><br><span class="line">  <span class="comment"># 替换同目录下的_config.yml文件中gh_token字符串为travis后台刚才配置的变量，注意此处sed命令用了双引号。单引号无效！</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">sed</span> <span class="string">-i</span> <span class="string">&quot;s/gh_token/$&#123;GH_TOKEN&#125;/g&quot;</span> <span class="string">./_config.yml</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">deploy</span></span><br><span class="line"><span class="comment"># End: Build LifeCycle</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，最后部署的时候我们需要输入这样的一个敏感信息。它的生成方式也比较简单：在 <a target="_blank" rel="noopener" href="https://github.com/settings/tokens">GitHub</a> 生成一个新 token，然后在 <a target="_blank" rel="noopener" href="https://travis-ci.org/account/repositories">Travis</a> 相关设置的环境变量（Environment Variables）中设置 <code>GH_TOKEN</code>（以及其他你想要的环境变量）即可。</p>
+<p>之后推送一下就可以发现成功啦。以后想要写博客、改博客也没有必要抱着电脑，只要能联网就可以随便写了。除此之外我把图床也放在了 GitHub 上，还真是充分利用了 GitHub 的网盘和笔记功能啊（逃</p>
+<p>除此之外，我们从项目右侧的图标中获取链接，查看生成状态。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">![Build Status</span>](<span class="link">https://travis-ci.org/40m41h42t/40m41h42t.github.io.svg?branch=blog-source</span>)](<span class="link">https://travis-ci.org/40m41h42t/40m41h42t.github.io</span>)</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p><a target="_blank" rel="noopener" href="https://travis-ci.org/40m41h42t/40m41h42t.github.io"><img src="https://travis-ci.org/40m41h42t/40m41h42t.github.io.svg?branch=blog-source" alt="Build Status"></a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://kchen.cc/2016/11/12/hexo-instructions/">Travis CI 持续集成</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/5a1fa30c6fb9a045263b5d2a">Hexo 遇上 Travis-CI：可能是最通俗易懂的自动发布博客图文教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://hjptriplebee.github.io/Travis%E4%B8%8ECodecov%E5%85%A5%E9%97%A8.html/">Github美化-Travis与Codecov入门</a></p>
+<p><a target="_blank" rel="noopener" href="https://qinyuanpei.github.io/posts/3521618732/">持续集成在Hexo自动化部署上的实践</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.itfanr.cc/2017/08/09/using-travis-ci-automatic-deploy-hexo-blogs/">使用Travis CI自动部署Hexo博客</a></p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://www.qrzbing.cn/blog">qrzbing</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://www.qrzbing.cn/blog/2019/10/01/from-0-to-Travis/">http://www.qrzbing.cn/blog/2019/10/01/from-0-to-Travis/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/blog/tags/blog/">blog</a>
+            <a href="/blog/tags/travis/">travis</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/10/04/angr-newhand-3/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">angr 入门（三）</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/09/30/angr-newhand-2/">
+        <span class="next-text nav-default">angr 入门（二）</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

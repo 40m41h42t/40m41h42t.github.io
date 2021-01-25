@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="生产者消费者问题"/><link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/2019/06/17/经典同步问题/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>生产者消费者问题 - QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">生产者消费者问题
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-06-17
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-text">生产者消费者问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="toc-text">问题分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E6%B6%88%E8%B4%B9%E8%80%85%E4%B8%8E%E7%94%9F%E4%BA%A7%E8%80%85%E7%9A%84%E6%83%85%E5%86%B5"><span class="toc-text">单消费者与生产者的情况</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">最简单的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E5%85%A5%E9%94%81%E6%88%96%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-text">加入锁或信号量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E5%BF%99%E7%AD%89"><span class="toc-text">避免忙等</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E6%B6%88%E8%B4%B9%E8%80%85%E4%B8%8E%E7%94%9F%E4%BA%A7%E8%80%85%E7%9A%84%E6%83%85%E5%86%B5"><span class="toc-text">多消费者与生产者的情况</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">简单的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E6%AD%BB%E9%94%81"><span class="toc-text">避免死锁</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-text">参考文章</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>这是一道经典的同步问题。我没有那么强大的直觉，只能一步一步分析了。</p>
+<a id="more"></a>
+
+<h1 id="生产者消费者问题"><a href="#生产者消费者问题" class="headerlink" title="生产者消费者问题"></a>生产者消费者问题</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>一组生产者进程和一组消费者进程共享一个初始为空、大小为 n 的缓冲区，只有缓冲区没满时，生产者才能把消息放入到缓冲区，否则必须等待；只有缓冲区不空时，消费者才能从中取出消息，否则必须等待。由于缓冲区是临界资源，它只允许一个生产者放入消息，或者一个消费者从中取出消息。</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/syn1.png"></p>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><ol>
+<li>关系分析：生产者和消费者对缓冲区互斥访问是互斥关系，同时生产者和消费者又是一个相互协作的关系，只有生产者生产之后，消费者才能消费，它们也是同步关系。</li>
+<li>整理思路：这里比较简单，只有生产者和消费者两个进程，且这两个进程存在着互斥关系和同步关系。那么需要解决的是互斥和同步的PV操作的位置。</li>
+<li>信号量设置：信号量 <code>mutex</code> 作为互斥信号量，用于控制互斥访问缓冲池，初值为1；信号量 <code>full</code> 用于记录当前缓冲池中“满”缓冲区数，初值为 0；信号量 <code>empty</code> 用于记录当前缓冲池中“空”缓冲区数，初值为n。</li>
+</ol>
+<p>缓冲区包含：</p>
+<ul>
+<li>n 个空间，用数组 buffer 表示</li>
+<li>count: 缓冲区中的产品数</li>
+<li>in: 生产者可以放产品的空间，<code>buffer[in]</code></li>
+<li>out: 消费者可以取产品的空间，<code>buffer[out]</code></li>
+</ul>
+<h2 id="单消费者与生产者的情况"><a href="#单消费者与生产者的情况" class="headerlink" title="单消费者与生产者的情况"></a>单消费者与生产者的情况</h2><h3 id="最简单的实现"><a href="#最简单的实现" class="headerlink" title="最简单的实现"></a>最简单的实现</h3><p>一个简单的伪代码实现如下：</p>
+<p>生产者：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">producer()</span><br><span class="line">&#123;</span><br><span class="line">	while(true)</span><br><span class="line">	&#123;</span><br><span class="line">		produce_an_item ; 生产一个产品</span><br><span class="line">		while(count &#x3D;&#x3D; n); 当缓冲区满时循环等待</span><br><span class="line">		buffer[in] &#x3D; item; 将 item 放入缓冲区中</span><br><span class="line">		in &#x3D; (in + 1) % n; 生产者缓冲区指针++</span><br><span class="line">		count++; 缓冲区产品数++</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消费者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">consumer()</span><br><span class="line">&#123;</span><br><span class="line">	while(true)</span><br><span class="line">	&#123;</span><br><span class="line">		while(count &#x3D;&#x3D; 0); 缓冲区空时循环等待</span><br><span class="line">		item &#x3D; buffer[out]; 取出产品</span><br><span class="line">		out &#x3D; (out + 1) % n;</span><br><span class="line">		count--;</span><br><span class="line">		consumer_the_item; 消费产品</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很明显，上述代码是<strong>线程不安全</strong>的。对缓冲区的产品数量 count 的操作可能会导致奇怪的变化。</p>
+<p>我们设有以下的情况：初始缓冲区内有 50 个产品，我们让生产者生产 5000 个产品，消费者消费 5000 个产品。理论上最终缓冲区内还会剩余 5000 个产品。对于这个例子，上述代码实现如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> count;</span><br><span class="line"><span class="keyword">char</span> buffer[<span class="number">101</span>];</span><br><span class="line"><span class="keyword">int</span> n;</span><br><span class="line"><span class="keyword">int</span> in, out;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">producer</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i != <span class="number">5000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == n)</span><br><span class="line">            ;</span><br><span class="line">        buffer[in] = <span class="number">1</span>;</span><br><span class="line">        in = (in + <span class="number">1</span>) % n;</span><br><span class="line">        count++;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time: %d, producer count: %d\n&quot;</span>, i, count);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i != <span class="number">5000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == <span class="number">0</span>)</span><br><span class="line">            ;</span><br><span class="line">        buffer[out] = <span class="number">0</span>;</span><br><span class="line">        out = (out + <span class="number">1</span>) % n;</span><br><span class="line">        count--;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time: %d, consumer count: %d\n&quot;</span>, i, count);</span><br><span class="line">        ++i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread_work</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    consumer();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pthread_t</span> tid;</span><br><span class="line">    n = <span class="number">100</span>;</span><br><span class="line">    count = <span class="number">50</span>;</span><br><span class="line">    in = <span class="number">50</span>;</span><br><span class="line">    out = <span class="number">0</span>;</span><br><span class="line">    pthread_create(&amp;tid, <span class="literal">NULL</span>, thread_work, <span class="literal">NULL</span>);</span><br><span class="line">    producer();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>跑出来后的结果如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/synre1.png"></p>
+<p>很明显和我们的预期结果不符。。</p>
+<h3 id="加入锁或信号量"><a href="#加入锁或信号量" class="headerlink" title="加入锁或信号量"></a>加入锁或信号量</h3><p>为了解决这个问题，我们可以用锁或是信号量加以修改。修改后的伪代码如下：</p>
+<p>生产者：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sex_init(mutex, 0, 1); &#x2F;&#x2F; mutex_init(&amp;mutex)</span><br><span class="line">producer()&#123;</span><br><span class="line">	while(true)</span><br><span class="line">	&#123;</span><br><span class="line">		produce_an_item ; 生产一个产品</span><br><span class="line">		while(count &#x3D;&#x3D; n); 当缓冲区满时循环等待</span><br><span class="line">		buffer[in] &#x3D; item; 将 item 放入缓冲区中</span><br><span class="line">		in &#x3D; (in + 1) % n; 生产者缓冲区指针++</span><br><span class="line">		sem_wait(&amp;mutex); &#x2F;&#x2F; mutex_lock(&amp;mutex);</span><br><span class="line">		count++; 缓冲区产品数++</span><br><span class="line">		sem_post(&amp;mutex); &#x2F;&#x2F; mutex_unlock(&amp;mutex);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消费者：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">consumer()</span><br><span class="line">&#123;</span><br><span class="line">	while(true)</span><br><span class="line">	&#123;</span><br><span class="line">		while(count &#x3D;&#x3D; 0); 缓冲区空时循环等待</span><br><span class="line">		item &#x3D; buffer[out]; 取出产品</span><br><span class="line">		out &#x3D; (out + 1) % n;</span><br><span class="line">		sem_wait(&amp;mutex); &#x2F;&#x2F; mutex_lock(&amp;mutex);</span><br><span class="line">		count--;</span><br><span class="line">		sem_post(&amp;mutex); &#x2F;&#x2F; mutex_unlock(&amp;mutex);</span><br><span class="line">		consumer_the_item; 消费产品</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考代码如下：</p>
+<p>加锁：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> count;</span><br><span class="line"><span class="keyword">char</span> buffer[<span class="number">101</span>];</span><br><span class="line"><span class="keyword">int</span> n;</span><br><span class="line"><span class="keyword">int</span> in, out;</span><br><span class="line"><span class="keyword">pthread_mutex_t</span> mutex = PTHREAD_MUTEX_INITIALIZER;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">producer</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i != <span class="number">5000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == n)</span><br><span class="line">            ;</span><br><span class="line">        buffer[in] = <span class="number">1</span>;</span><br><span class="line">        in = (in + <span class="number">1</span>) % n;</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line">        count++;</span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time: %d, producer count: %d\n&quot;</span>, i, count);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i != <span class="number">5000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == <span class="number">0</span>)</span><br><span class="line">            ;</span><br><span class="line">        buffer[out] = <span class="number">0</span>;</span><br><span class="line">        out = (out + <span class="number">1</span>) % n;</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line">        count--;</span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time: %d, consumer count: %d\n&quot;</span>, i, count);</span><br><span class="line">        ++i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread_work</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    consumer();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pthread_t</span> tid;</span><br><span class="line">    n = <span class="number">100</span>;</span><br><span class="line">    count = <span class="number">50</span>;</span><br><span class="line">    in = <span class="number">50</span>;</span><br><span class="line">    out = <span class="number">0</span>;</span><br><span class="line">    pthread_create(&amp;tid, <span class="literal">NULL</span>, thread_work, <span class="literal">NULL</span>);</span><br><span class="line">    producer();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>加信号量：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;semaphore.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> count;</span><br><span class="line"><span class="keyword">char</span> buffer[<span class="number">101</span>];</span><br><span class="line"><span class="keyword">int</span> n;</span><br><span class="line"><span class="keyword">int</span> in, out;</span><br><span class="line"><span class="keyword">sem_t</span> mutex;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">producer</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i != <span class="number">5000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// usleep(100);</span></span><br><span class="line">        <span class="keyword">while</span> (count == n)</span><br><span class="line">            ;</span><br><span class="line">        buffer[in] = <span class="number">1</span>;</span><br><span class="line">        in = (in + <span class="number">1</span>) % n;</span><br><span class="line">        sem_wait(&amp;mutex);</span><br><span class="line">        count++;</span><br><span class="line">        sem_post(&amp;mutex);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time: %d, producer count: %d\n&quot;</span>, i, count);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i != <span class="number">5000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// usleep(2000);</span></span><br><span class="line">        <span class="keyword">while</span> (count == <span class="number">0</span>)</span><br><span class="line">            ;</span><br><span class="line">        buffer[out] = <span class="number">0</span>;</span><br><span class="line">        out = (out + <span class="number">1</span>) % n;</span><br><span class="line">        sem_wait(&amp;mutex);</span><br><span class="line">        count--;</span><br><span class="line">        sem_post(&amp;mutex);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;time: %d, consumer count: %d\n&quot;</span>, i, count);</span><br><span class="line">        ++i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread_work</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    consumer();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pthread_t</span> tid;</span><br><span class="line">    n = <span class="number">100</span>;</span><br><span class="line">    count = <span class="number">50</span>;</span><br><span class="line">    in = <span class="number">50</span>;</span><br><span class="line">    out = <span class="number">0</span>;</span><br><span class="line">    sem_init(&amp;mutex, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    pthread_create(&amp;tid, <span class="literal">NULL</span>, thread_work, <span class="literal">NULL</span>);</span><br><span class="line">    producer();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/synre2.png"></p>
+<p>这里信号量设置的是初始值为 1，实际上在这里的效果和锁是等价的。那么锁和信号相比究竟有什么区别呢？</p>
+<p>实际上，锁与信号量相比增加了所有权的概念，<strong>一只锁住的 Mutex 只能由给它上锁的线程解开</strong>，只有系铃人才能解铃。Mutex 的功能也就因而限制在了构造临界区上。</p>
+<p><strong>一元信号量则可以由任一线程解开</strong>。这样多出来的一份语义，就是解决读者-写者问题的工具。比如某进程读取磁盘并进入睡眠，等待中断读取盘块结束之后来唤醒它。这就是可以祭出一元信号量的一个情景，而 Mutex 是解决不了的。『信号量』 这个词本身来自火车站的信号灯，其实本来就暗含着一层 『通知』 的含义。</p>
+<p>上述代码的结果是符合预期的。但里面有没有其他问题呢？</p>
+<h3 id="避免忙等"><a href="#避免忙等" class="headerlink" title="避免忙等"></a>避免忙等</h3><p>进程的基本状态图如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/process1.png"></p>
+<p>进程在阻塞状态可以分为以下几种情况：</p>
+<ul>
+<li><p>死等状态：进程在有限时间内根本不能进入临界区，而一直在尝试进入，陷入一种无结果的等待状态。<br>（没有进入临界区的正在等待的某进程根本无法获得临界资源而进入进程，这种等待是无结果的，是死等状态～）-&gt; 这个时候应该放弃这个无结果的事情，保证自己等待的时间是有限的</p>
+</li>
+<li><p>忙等状态：当一个进程正处在某临界区内，任何试图进入其临界区的进程都必须进入代码连续循环，陷入忙等状态。连续测试一个变量直到某个值出现为止，称为忙等。<br>（没有进入临界区的正在等待的某进程不断的在测试循环代码段中的变量的值，占着处理机而不释放，这是一种忙等状态～）-&gt; 这个时候应该释放处理机让给其他进程</p>
+</li>
+<li><p>有限等待：对要求访问临界资源的进程，应保证有限时间内能进入自己的临界区，以免陷入“死等”状态～（受惠的是进程自己）</p>
+</li>
+<li><p>让权等待：当进程不能进入自己的临界区时，应立即释放处理机，以免进程陷入“忙等”状态～（受惠的是其他进程）</p>
+</li>
+</ul>
+<p>上述代码中对 <code>count</code> 的判断会消耗大量的资源，使进程陷入忙等状态。要消除这种状态，我们要考虑以下几个问题：</p>
+<ul>
+<li>对生产者来说，“资源”是什么？<ul>
+<li>空盒子数</li>
+<li>定义信号量 empty，初始为 n</li>
+<li>每次放入一个新产品时，需要 <code>sem_wait(empty)</code></li>
+</ul>
+</li>
+<li>对于消费者来说，“资源”是什么？<ul>
+<li>产品数</li>
+<li>定义信号量 full，初始为 0</li>
+<li>每次消耗一个产品时，需要 <code>sem_wait(full)</code></li>
+</ul>
+</li>
+<li>生产者和消费者还需要做什么操作？<ul>
+<li>生产者需要 <code>sem_signal(full)</code></li>
+<li>消费者需要 <code>sem_signal(empty)</code></li>
+</ul>
+</li>
+</ul>
+<p>一个简单的思路就出现了，伪代码表示如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">sem_t full, empty;</span><br><span class="line">sem_init(&amp;full, 0, 0);</span><br><span class="line">sem_init(&amp;empty, 0, n);</span><br><span class="line">producer()&#123;</span><br><span class="line">	while(true)&#123;</span><br><span class="line">		produce_an_item</span><br><span class="line">		sem_wait(empty);</span><br><span class="line">		buffer[in] &#x3D; item;</span><br><span class="line">		in &#x3D; (in + 1) % n;</span><br><span class="line">		sem_signal(full);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">consumer()&#123;</span><br><span class="line">	while(true)&#123;</span><br><span class="line">		sem_wait(full);</span><br><span class="line">		item &#x3D; buffer[out];</span><br><span class="line">		out &#x3D; (out + 1) % n;</span><br><span class="line">		sem_signal(empty);</span><br><span class="line">		consume_the_item;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="多消费者与生产者的情况"><a href="#多消费者与生产者的情况" class="headerlink" title="多消费者与生产者的情况"></a>多消费者与生产者的情况</h2><h3 id="简单的实现"><a href="#简单的实现" class="headerlink" title="简单的实现"></a>简单的实现</h3><p>但是遇到多个消费者和生产者的时候，他们相互之间会产生竞争。为了避免上述问题的出现，我们还需要锁来保护。大概思路如下：</p>
+<ul>
+<li>生产者<ol>
+<li>如果缓冲区非满时，申请锁；</li>
+<li>生产产品</li>
+<li>释放锁，释放非空信号</li>
+</ol>
+</li>
+<li>消费者<ol>
+<li>如果缓冲区非空时，申请锁；</li>
+<li>消费产品</li>
+<li>释放锁，释放非满信号</li>
+</ol>
+</li>
+</ul>
+<p>伪代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">sem_t full; &#x2F;&#x2F; # of filled slots</span><br><span class="line">sem_t empty; &#x2F;&#x2F; # of empty slots</span><br><span class="line">sem_t mutex; &#x2F;&#x2F; mutual exclusion</span><br><span class="line">sem_init(&amp;full, 0, 0)</span><br><span class="line">sem_init(&amp;empty, 0, N)</span><br><span class="line">sem_init(&amp;mutex, 0, 1)</span><br><span class="line">producer() &#123;</span><br><span class="line">	while (true) &#123;</span><br><span class="line">		sem_wait(mutex);</span><br><span class="line">		sem_wait(empty);</span><br><span class="line">		produce_an_item;</span><br><span class="line">		buffer[in] &#x3D; item;</span><br><span class="line">		in &#x3D; (in + 1)%n;</span><br><span class="line">		sem_signal(full);</span><br><span class="line">		sem_signal(mutex);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">consumer() &#123;</span><br><span class="line">	while (true) &#123;</span><br><span class="line">		sem_wait(mutex);</span><br><span class="line">		sem_wait(full);</span><br><span class="line">		item &#x3D; buffer[out];</span><br><span class="line">		out &#x3D; (out + 1)%n;</span><br><span class="line">		sem_signal(empty);</span><br><span class="line">		sem_signal(mutex);</span><br><span class="line">		consume_the_item;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="避免死锁"><a href="#避免死锁" class="headerlink" title="避免死锁"></a>避免死锁</h3><p>但是实际上，尽管引入了新的变量后解决了竞争的问题，显而易见它也会带来死锁。解决这个的方法是如果没有等待到信号量，在循环中尝试等待并释放锁。实际上，这时候我们只需要一个信号量就可以了，因为大循环包含了对空/满的判断。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">sem_t cond;</span><br><span class="line">mutex_t mutex;</span><br><span class="line">producer() &#123;</span><br><span class="line">	while (true) &#123;</span><br><span class="line">		mutex_lock(mutex);</span><br><span class="line">		while(buffer_is_full())</span><br><span class="line">			mutex_unlock(mutex);</span><br><span class="line">			sem_wait(cond);</span><br><span class="line">			mutex_lock(mutex);</span><br><span class="line">		produce_an_item;</span><br><span class="line">		buffer[in] &#x3D; item;</span><br><span class="line">		in &#x3D; (in + 1)%n;</span><br><span class="line">		mutex_unlock(mutex);</span><br><span class="line">		sem_signal(cond);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">consumer() &#123;</span><br><span class="line">	while (true) &#123;</span><br><span class="line">		sem_wait(mutex);</span><br><span class="line">		while(buffer_is_empty())</span><br><span class="line">			mutex_unlock(mutex);</span><br><span class="line">			sem_wait(full)</span><br><span class="line">			mutex_lock(mutex)</span><br><span class="line">		sem_wait(full);</span><br><span class="line">		item &#x3D; buffer[out];</span><br><span class="line">		out &#x3D; (out + 1)%n;</span><br><span class="line">		mutex_unlock(mutex);</span><br><span class="line">		sem_signal(cond);</span><br><span class="line">		consume_the_item;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不过在 Linux 中，<code>pthread_cond_wait(cond, mutex)</code> 参数已经被设置好了，可以简化我们的一部分操作。至于原因可以参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/58838318">这篇文章</a>。</p>
+<p>最终的参考代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CAPACITY 100     <span class="comment">// 缓冲区的最大容量</span></span></span><br><span class="line"><span class="keyword">int</span> buffer[CAPACITY];  <span class="comment">// 缓冲区数组</span></span><br><span class="line"><span class="keyword">int</span> in;                <span class="comment">// 缓冲区的写指针</span></span><br><span class="line"><span class="keyword">int</span> out;               <span class="comment">// 缓冲区的读指针</span></span><br><span class="line"><span class="keyword">int</span> size;              <span class="comment">// 缓冲区中的数据个数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">buffer_init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    in = <span class="number">0</span>;</span><br><span class="line">    out = <span class="number">0</span>;</span><br><span class="line">    size = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断缓冲区是否为空</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">buffer_is_empty</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> size == <span class="number">0</span>; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断缓冲区是否为满</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">buffer_is_full</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> size == CAPACITY; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 向缓冲区中追加一个数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">buffer_put</span><span class="params">(<span class="keyword">int</span> item)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    buffer[in] = item;</span><br><span class="line">    in = (in + <span class="number">1</span>) % CAPACITY;</span><br><span class="line">    size++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从缓冲区中取走一个数据</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">buffer_get</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> item;</span><br><span class="line"></span><br><span class="line">    item = buffer[out];</span><br><span class="line">    out = (out + <span class="number">1</span>) % CAPACITY;</span><br><span class="line">    size--;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> item;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pthread_cond_t</span> cond;</span><br><span class="line"><span class="keyword">pthread_mutex_t</span> mutex;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生产者线程执行的流程</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">producer_loop</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 生产CAPACITY*2个数据</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; CAPACITY*<span class="number">2</span>; i++) &#123;       </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;produce %d\n&quot;</span>, i);</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 当缓冲区为满时，生产者需要等待</span></span><br><span class="line">        <span class="keyword">while</span> (buffer_is_full()) &#123;   </span><br><span class="line">            <span class="comment">// 当前线程已经持有了mutex，首先释放mutex，然后阻塞，醒来后再次获取mutex</span></span><br><span class="line">            pthread_cond_wait(&amp;cond, &amp;mutex);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 此时，缓冲区肯定不是满的，向缓冲区写数据</span></span><br><span class="line">        buffer_put(i);</span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);        </span><br><span class="line"></span><br><span class="line">        <span class="comment">// 缓冲区的状态发生了变化，唤醒其它的生产者或消费者</span></span><br><span class="line">        pthread_cond_signal(&amp;cond);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 消费者线程执行的流程</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">consumer_loop</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 消费CAPACITY*2个数据</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; CAPACITY*<span class="number">2</span>; i++) &#123;  </span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 当缓冲区为空时，消费者需要等待</span></span><br><span class="line">        <span class="keyword">while</span> (buffer_is_empty()) &#123;   </span><br><span class="line">            <span class="comment">// 当前线程已经持有了mutex，首先释放mutex，然后阻塞，醒来后再次获取mutex</span></span><br><span class="line">            pthread_cond_wait(&amp;cond, &amp;mutex);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 此时，缓冲区肯定不是空的，从缓冲区取数据</span></span><br><span class="line">        <span class="keyword">int</span> item = buffer_get();</span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);        </span><br><span class="line"></span><br><span class="line">        <span class="comment">// 缓冲区的状态发生了变化，唤醒其它的生产者或消费者</span></span><br><span class="line">        pthread_cond_signal(&amp;cond);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\tconsume %d\n&quot;</span>, item);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pthread_t</span> producer1, producer2;</span><br><span class="line">    <span class="keyword">pthread_t</span> consumer1, consumer2;</span><br><span class="line"></span><br><span class="line">    buffer_init();</span><br><span class="line">    pthread_create(&amp;producer1, <span class="literal">NULL</span>, producer_loop, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_create(&amp;producer2, <span class="literal">NULL</span>, producer_loop, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_create(&amp;consumer1, <span class="literal">NULL</span>, consumer_loop, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_create(&amp;consumer2, <span class="literal">NULL</span>, consumer_loop, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    pthread_join(producer1, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(producer2, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(consumer1, <span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(consumer2, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个问题分析起来好像很简单，但是在添加锁和信号量之后又会引入很多新的问题。在解决它的过程中需要一步一步分析逻辑才能避开这些问题。</p>
+<p>以后有机会一定要看看多线程、锁、信号量源码级别的实现。。</p>
+<p>另外自己以后写文章的时候一定要列一个大纲，我感觉这篇文章的细节就不够清晰。。</p>
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/liuchuo/article/details/51986201">【操作系统】死等状态、忙等状态、有限等待、让权等待</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/a1414345/article/details/70879930">线程安全与线程不安全</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32531445">如何写出线程不安全的代码</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/47704079">semaphore和mutex的区别？</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/58838318">为什么pthread_cond_wait需要互斥锁mutex作为参数</a></p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://www.qrzbing.cn/blog">qrzbing</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://www.qrzbing.cn/blog/2019/06/17/%E7%BB%8F%E5%85%B8%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98/">http://www.qrzbing.cn/blog/2019/06/17/%E7%BB%8F%E5%85%B8%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/07/08/how2heap-1/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">how2heap - 1</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/06/17/python%E5%AF%BC%E5%87%BA%E4%BE%9D%E8%B5%96/">
+        <span class="next-text nav-default">python导出依赖</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

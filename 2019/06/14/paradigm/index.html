@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="数据库中范式的概念"/><link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/2019/06/14/paradigm/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>数据库中范式的概念 - QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">数据库中范式的概念
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-06-14
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1NF"><span class="toc-text">1NF</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2NF"><span class="toc-text">2NF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96"><span class="toc-text">函数依赖</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E5%85%A8%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96"><span class="toc-text">完全函数依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96"><span class="toc-text">部分函数依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E9%80%92%E5%87%BD%E6%95%B0%E4%BE%9D%E8%B5%96"><span class="toc-text">传递函数依赖</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A0%81"><span class="toc-text">码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%9E%E4%B8%BB%E5%B1%9E%E6%80%A7"><span class="toc-text">非主属性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3NF"><span class="toc-text">3NF</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#BCNF"><span class="toc-text">BCNF</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A1%A5%E5%85%85%E4%BF%A1%E6%81%AF"><span class="toc-text">补充信息</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>之前对范式了解了不深，好好整理一下。</p>
+<a id="more"></a>
+
+<h1 id="1NF"><a href="#1NF" class="headerlink" title="1NF"></a>1NF</h1><p>1NF 的定义为：符合 1NF 的关系中的每个属性都不可再分。</p>
+<p>1NF 是所有关系型数据库的基本要求。如果数据库的设计不满足这个要求，操作一定不能成功（为什么不能成功？）</p>
+<p>但是如果只符合 1NF 的设计的话，仍然可能出现数据冗余过大、插入异常、删除异常、修改异常的问题，以下表为例：</p>
+<table>
+<thead>
+<tr>
+<th>学号</th>
+<th>姓名</th>
+<th>系名</th>
+<th>系主任</th>
+<th>课名</th>
+<th>分数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+<td>数学</td>
+<td>95</td>
+</tr>
+<tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+<td>英语</td>
+<td>87</td>
+</tr>
+<tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+<td>化学</td>
+<td>88</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+<td>数学</td>
+<td>89</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+<td>英语</td>
+<td>90</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+<td>计算机</td>
+<td>91</td>
+</tr>
+<tr>
+<td>103</td>
+<td>小芳</td>
+<td>法律</td>
+<td>刘玲</td>
+<td>数学</td>
+<td>92</td>
+</tr>
+<tr>
+<td>103</td>
+<td>小芳</td>
+<td>法律</td>
+<td>刘玲</td>
+<td>法学</td>
+<td>93</td>
+</tr>
+</tbody></table>
+<p>对于上表有下列问题：</p>
+<p>每一名学生的学号、姓名、系名、系主任这些数据重复多次。每个系与对应的系主任的数据也重复多次——<strong>数据冗余过大</strong> </p>
+<p>假如学校新建了一个系，但是暂时还没有招收任何学生（比如3月份就新建了，但要等到8月份才招生），那么是无法将系名与系主任的数据单独地添加到数据表中去的 （注１）——<strong>插入异常</strong></p>
+<p>注１：根据三种关系完整性约束中实体完整性的要求，关系中的码（注２）所包含的任意一个属性都不能为空，所有属性的组合也不能重复。为了满足此要求，图中的表，只能将学号与课名的组合作为码，否则就无法唯一地区分每一条记录。</p>
+<p>注２：<strong>码：关系中的某个属性或者某几个属性的组合，用于区分每个元组</strong>（可以把“元组”理解为一张表中的每条记录，也就是每一行）<strong>。</strong></p>
+<p>假如将某个系中所有学生相关的记录都删除，那么所有系与系主任的数据也就随之消失了（一个系所有学生都没有了，并不表示这个系就没有了）。——<strong>删除异常</strong></p>
+<p>假如李小明转系到法律系，那么为了保证数据库中数据的一致性，需要修改三条记录中系与系主任的数据。——<strong>修改异常</strong>。</p>
+<p>正因为仅符合1NF的数据库设计存在着这样那样的问题，我们需要提高设计标准，去掉导致上述四种问题的因素，使其符合更高一级的范式（2NF），这就是所谓的“规范化”。</p>
+<h1 id="2NF"><a href="#2NF" class="headerlink" title="2NF"></a>2NF</h1><p>定义：若 $R \in 1NF$，且每一个非主属性完全函数依赖于任何一个候选码。则 $R\in2NF$。</p>
+<p>总的来说，2NF 在 1NF 的基础上，消除了非主属性对于码的部分函数依赖。这涉及到四个概念——“<strong>函数依赖</strong>”、“<strong>码</strong>”、“<strong>非主属性</strong>”、“<strong>部分函数依赖</strong>”。</p>
+<h2 id="函数依赖"><a href="#函数依赖" class="headerlink" title="函数依赖"></a>函数依赖</h2><p>定义：设 R(U) 是属性集 U 上的关系模式，X，Y 是 U 的子集。若对于 R(U) 的任意一个可能的关系 r，r 中不可能存在两个元组在 X 上的属性值相等，而在 Y 上的属性值不等，则称 <strong>X 函数确定 Y</strong> 或 <strong>Y 函数依赖于 X</strong>，记作 $X \rightarrow Y$。</p>
+<p>可以这样简要理解：若在一张表中，在属性（或属性组）X 的值确定的情况下，必定能确定属性 Y 的值，那么就可以说 Y 函数依赖于 X，写作 $X\rightarrow Y$。也就是说，在数据表中，不存在任意两条记录，它们在 X 属性（或属性组）上的值相同，而在 Y 属性上的值不同。这也是“函数依赖”名字的由来，类似于函数关系 y=f(x)，在 x 的值确定的情况下，y 的值一定是确定的。</p>
+<p>我们把上面那张表拖下来：</p>
+<table>
+<thead>
+<tr>
+<th>学号</th>
+<th>姓名</th>
+<th>系名</th>
+<th>系主任</th>
+<th>课名</th>
+<th>分数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+<td>数学</td>
+<td>95</td>
+</tr>
+<tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+<td>英语</td>
+<td>87</td>
+</tr>
+<tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+<td>化学</td>
+<td>88</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+<td>数学</td>
+<td>89</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+<td>英语</td>
+<td>90</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+<td>计算机</td>
+<td>91</td>
+</tr>
+<tr>
+<td>103</td>
+<td>小芳</td>
+<td>法律</td>
+<td>刘玲</td>
+<td>数学</td>
+<td>92</td>
+</tr>
+<tr>
+<td>103</td>
+<td>小芳</td>
+<td>法律</td>
+<td>刘玲</td>
+<td>法学</td>
+<td>93</td>
+</tr>
+</tbody></table>
+<p>对于上表中的数据，找不到任何一条记录，它们的学号相同而对应的姓名不同。所以我们可以说<strong>姓名函数依赖于学号</strong>，写作<strong>学号</strong>$\rightarrow$<strong>姓名</strong>。但是反过来，因为可能出现同名的学生，所以有可能不同的两条学生记录，它们在姓名上的值相同，但对应的学号不同，所以我们不能说学号函数依赖于姓名。表中的其他函数依赖还有如：</p>
+<ul>
+<li>系名$\rightarrow$系主任</li>
+<li>学号$\rightarrow$系主任</li>
+<li>（学号，课名）$\rightarrow$分数</li>
+</ul>
+<p>但是以下函数依赖关系不成立：</p>
+<ul>
+<li>学号$\rightarrow$课名</li>
+<li>学号$\rightarrow$分数</li>
+<li>课名$\rightarrow$系主任</li>
+<li>（学号，课名）$\rightarrow$姓名</li>
+</ul>
+<p>从“函数依赖”这个概念展开，还有三个概念：</p>
+<h3 id="完全函数依赖"><a href="#完全函数依赖" class="headerlink" title="完全函数依赖"></a>完全函数依赖</h3><p>定义：在 R(U) 中，如果 $X\rightarrow Y$，并且对于 X 的任何一个真子集 $X’$，都有 $X’\nrightarrow Y$，则称 Y 对 <strong>X 完全函数依赖</strong>，记作 $X\stackrel{F}{\rightarrow}Y$</p>
+<p>例如：</p>
+<ul>
+<li>$学号\stackrel{F}{\longrightarrow}姓名$</li>
+<li>$（学号，课名）\stackrel{F}{\longrightarrow}分数$ （注：因为同一个学号对应的分数不确定，同一个课名对应的分数也不确定）</li>
+</ul>
+<h3 id="部分函数依赖"><a href="#部分函数依赖" class="headerlink" title="部分函数依赖"></a>部分函数依赖</h3><p>定义：若 $X\rightarrow Y$，但 Y 不完全函数依赖于 X，则称 Y 对 X <strong>部分函数依赖（partial functional dependency）</strong>，记作$X\stackrel{P}{\rightarrow}Y$。</p>
+<p>例如：</p>
+<ul>
+<li>$（学号，课名）\stackrel{P}{\longrightarrow}姓名$，也就是说姓名函数依赖于学号和课名，但是姓名不满足函数依赖的这个条件：对于 X 的任何一个真子集 $X’$，都有 $X’\nrightarrow Y$。因为对于 X，有学号确定姓名，因此只满足部分函数依赖的关系。</li>
+</ul>
+<h3 id="传递函数依赖"><a href="#传递函数依赖" class="headerlink" title="传递函数依赖"></a>传递函数依赖</h3><p>定义：在 R(U) 中，如果 $X\rightarrow Y(Y\nsubseteq  X)$，$Y\nrightarrow X$，$Y\rightarrow Z$，$Z\nsubseteq Y$，则称 Z 对 X <strong>传递函数依赖</strong>（transitive functional dependency）。记作 $X\stackrel{传递}{\longrightarrow}Y$</p>
+<p>用人话描述就是：加入 Z 函数依赖于 Y，且 Y 函数依赖于 X，并且 Y 不包含于 X，且 X 不函数依赖于 Y，那么称 Z 传递函数依赖于 X，记作 $X\stackrel{T}{\rightarrow}Z$</p>
+<h2 id="码"><a href="#码" class="headerlink" title="码"></a>码</h2><p>定义：设 K 为 $$R&lt;U,F&gt;$$ 中的属性或属性组合，若 $K\stackrel{F}{\rightarrow}U$，则 K 为 R 的<strong>候选码</strong>（candidate key）。</p>
+<p>人话：设 K 为某表中的一个属性或属性组，若除 K 之外的所有属性都<strong>完全函数依赖</strong>于 K，那么我们称 K 为<strong>候选码</strong>，简称为<strong>码</strong>。实际可以理解为：假如 K 确定的情况下，该表除 K 之外的所有属性的值也就随之确定，那么 K 就是码。一张表中可以有超过一个码。实际通常选择其中一个码作为<strong>主码</strong>。</p>
+<p>例如：</p>
+<ul>
+<li>对于上面的表，（学号，课名）这个属性组就是码，该表中有且仅有这一个码（假设所有课没有重名的情况）。</li>
+</ul>
+<h2 id="非主属性"><a href="#非主属性" class="headerlink" title="非主属性"></a>非主属性</h2><p>定义：包含在任何一个候选码中的属性称为<strong>主属性</strong>（primary attribute）；不包含在任何候选码中的属性称为<strong>非主属性</strong>（nonprime attribute）。</p>
+<p>例如：</p>
+<ul>
+<li>对于上面的表，因为码是（学号，课名），因此主属性就是学号与课名。</li>
+</ul>
+<p>接下来我们就可以回来看 2NF 了。首先我们需要判断，上表是否符合 2NF 的要求？根据 2NF 的定义，判断的依据实际上就是看数据表中<strong>是否存在非主属性对于码的部分函数依赖</strong>。若存在，则数据表最高只符合1NF的要求，若不存在，则符合2NF的要求。判断的方法是：</p>
+<ul>
+<li>第一步：找出数据表中所有的<strong>码</strong>。</li>
+<li>第二步：根据第一步所得到的码，找出所有的<strong>主属性</strong>。</li>
+<li>第三步：数据表中，除去所有的主属性，剩下的就是<strong>非主属性</strong>了。</li>
+<li>第四步：查看是否存在非主属性对码的<strong>部分函数依赖</strong>。</li>
+</ul>
+<p>为了避免频繁拖动，我再把这张表拉下来：</p>
+<table>
+<thead>
+<tr>
+<th>学号</th>
+<th>姓名</th>
+<th>系名</th>
+<th>系主任</th>
+<th>课名</th>
+<th>分数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+<td>数学</td>
+<td>95</td>
+</tr>
+<tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+<td>英语</td>
+<td>87</td>
+</tr>
+<tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+<td>化学</td>
+<td>88</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+<td>数学</td>
+<td>89</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+<td>英语</td>
+<td>90</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+<td>计算机</td>
+<td>91</td>
+</tr>
+<tr>
+<td>103</td>
+<td>小芳</td>
+<td>法律</td>
+<td>刘玲</td>
+<td>数学</td>
+<td>92</td>
+</tr>
+<tr>
+<td>103</td>
+<td>小芳</td>
+<td>法律</td>
+<td>刘玲</td>
+<td>法学</td>
+<td>93</td>
+</tr>
+</tbody></table>
+<p>下图表示了表中所有的函数依赖关系：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/para1.png"></p>
+<p>按照上面的步骤，我们可以分析到如下的结果：</p>
+<ul>
+<li>第一步，码是<strong>（学号，课名）</strong></li>
+<li>第二步，主属性是：<strong>学号</strong>、<strong>课名</strong></li>
+<li>第三步，非主属性有：<strong>姓名</strong>、<strong>系名</strong>、<strong>系主任</strong>、<strong>分数</strong></li>
+<li>第四步：<ul>
+<li>对于<strong>（学号，课名）$\rightarrow$姓名</strong>，有<strong>学号$\rightarrow$姓名</strong>，存在非主属性<strong>姓名</strong>对码<strong>（学号，课名）</strong>的部分函数依赖。</li>
+<li>对于<strong>（学号，课名）$\rightarrow$系名</strong>，有<strong>学号$\rightarrow$系名</strong>，存在非主属性<strong>系名</strong>对码<strong>（学号，课名）</strong>的部分函数依赖。</li>
+<li>对于<strong>（学号，课名）$\rightarrow$系主任</strong>，有<strong>学号$\rightarrow$系主任</strong>，存在非主属性<strong>系主任</strong>对码<strong>（学号，课名）</strong>的部分函数依赖。</li>
+</ul>
+</li>
+</ul>
+<p>因此上表存在非主属性对于码的部分函数依赖，最高只符合 1NF 的要求，不符合 2NF 的要求。</p>
+<p>为了让上表符合 2NF 的要求，我们必须消除这些部分函数依赖，只有一个办法，就是将大数据表拆分成两个或更多个更小的数据表。在拆分的过程中，要达到更高一级范式的要求，这个过程叫做“模式分解”。模式分解不是唯一的，以下是其中一种方法：</p>
+<p>选课表（学号，课名，分数）</p>
+<p>学生表（学号，姓名，系名，系主任）</p>
+<p>我们接下来判断选课表与学生表是否符合 2NF 的要求：</p>
+<ul>
+<li>对于<strong>选课</strong>表，其码是<strong>（学号，课名）</strong>，主属性是<strong>学号</strong>和<strong>课名</strong>，非主属性是<strong>分数</strong>。<ul>
+<li><strong>学号</strong>确定，不能唯一确定<strong>分数</strong>；<strong>课名</strong>确定也不能唯一确定<strong>分数</strong>。所以不存在非主属性<strong>分数</strong>对码<strong>（学号，姓名）</strong>的部分函数依赖，所以此表符合 2NF 的要求。</li>
+</ul>
+</li>
+<li>对于<strong>学生</strong>表，其码是<strong>学号</strong>，主属性是<strong>学号</strong>，非主属性是<strong>姓名</strong>、<strong>系名</strong>和<strong>系主任</strong>。因为码只有一个属性，所以不可能存在非主属性对于码的部分函数依赖，所以此表符合 2NF 的要求。</li>
+</ul>
+<p><strong>因此我们可以看出，只有在码为属性组的时候才会出现非主属性对码的部分函数依赖。</strong></p>
+<p>下图表示模式分解后新的函数依赖关系：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/para2.png"></p>
+<p>下表表示模式分解后的新数据：</p>
+<p>选课表：</p>
+<table>
+<thead>
+<tr>
+<th>学号</th>
+<th>课名</th>
+<th>分数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>101</td>
+<td>数学</td>
+<td>95</td>
+</tr>
+<tr>
+<td>101</td>
+<td>英语</td>
+<td>87</td>
+</tr>
+<tr>
+<td>101</td>
+<td>化学</td>
+<td>76</td>
+</tr>
+<tr>
+<td>102</td>
+<td>数学</td>
+<td>72</td>
+</tr>
+<tr>
+<td>102</td>
+<td>英语</td>
+<td>98</td>
+</tr>
+<tr>
+<td>102</td>
+<td>计算机</td>
+<td>88</td>
+</tr>
+<tr>
+<td>103</td>
+<td>数学</td>
+<td>82</td>
+</tr>
+<tr>
+<td>103</td>
+<td>法学</td>
+<td>82</td>
+</tr>
+</tbody></table>
+<p>学生表：</p>
+<table>
+<thead>
+<tr>
+<th>学号</th>
+<th>姓名</th>
+<th>系名</th>
+<th>系主任</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+<td>王强</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+<td>王强</td>
+</tr>
+<tr>
+<td>103</td>
+<td>小芳</td>
+<td>法律</td>
+<td>刘玲</td>
+</tr>
+</tbody></table>
+<p>现在来看一下进行同样的操作是否还存在着之前的问题？</p>
+<ol>
+<li><p>小明转系到法律系</p>
+<p>只需要修改一次小明对应的系的值即可。——有改进</p>
+</li>
+<li><p>数据的冗余是否减少了？</p>
+<p>学生的姓名、系名与系主任不再像之前一样重复那么多次了。——有改进</p>
+</li>
+<li><p>删除某个系中所有的学生记录</p>
+<p>该系的信息仍然全部丢失。——无改进</p>
+</li>
+<li><p>插入一个尚无学生的新系的信息。</p>
+<p>因为学生表的码是学号，不能为空，所以此操作不被允许。——无改进</p>
+</li>
+</ol>
+<p>所以说，仅仅符合 2NF 的要求，很多情况下还是不够的，而出现问题的原因，在于仍然存在非主属性<strong>系主任</strong>对于码<strong>学号</strong>的传递函数依赖。为了能进一步解决这些问题，我们还需要将符合 2NF 要求的数据表改进为符合 3NF 的要求。</p>
+<h1 id="3NF"><a href="#3NF" class="headerlink" title="3NF"></a>3NF</h1><p>定义：<br>设关系模式 $$ R&lt;U,F&gt;\in 1NF $$ ，若 R 中不存在这样的码 X，属性组 Y 及非主属性 $$Z（Z\nsupseteq Y）使得 X\rightarrow Y，Y\rightarrow Z$$ 成立，$$Y\nrightarrow X$$，则称 $$R&lt;U,F&gt;\in 3NF$$。</p>
+<p>人话：<strong>第三范式（3NF）在 2NF 的基础上，消除了非主属性对于码的传递函数依赖。</strong>也就是说，如果存在非主属性对于码的传递函数依赖，则不符合 3NF 的要求。</p>
+<p>接下来我们看看上表中的设计是否符合 3NF 的要求。</p>
+<p>对于<strong>选课</strong>表，主码为<strong>（学号，课名）</strong>，主属性为<strong>学号</strong>和<strong>课名</strong>，非主属性只有<strong>分数</strong>，不可能存在传递函数依赖，所以<strong>选课</strong>表的设计符合 3NF 的要求。</p>
+<p>对于<strong>学生</strong>表，主码为<strong>学号</strong>，主属性为<strong>学号</strong>，非主属性为<strong>姓名</strong>、<strong>系名</strong>和<strong>系主任</strong>。因为<strong>学号</strong>$\rightarrow$<strong>系名</strong>，同时<strong>系名</strong>$\rightarrow$<strong>系主任</strong>，所以存在非主属性<strong>系主任</strong>对于码<strong>学号</strong>的传递函数依赖。所以<strong>学生</strong>表的设计不符合 3NF 的要求。</p>
+<p>为了让数据表设计达到 3NF，我们必须进一步进行模式分解为以下形式：</p>
+<p>选课表（学号，课名，分数）</p>
+<p>学生表（学号，姓名，系名）</p>
+<p>系表（系名，系主任）</p>
+<p><strong>选课</strong>表符合 3NF 的要求，上面已经分析过了。</p>
+<p>对于<strong>学生</strong>表，码为<strong>学号</strong>，主属性为<strong>学号</strong>，非主属性为<strong>系名</strong>，不可能存在非主属性对于码的传递函数依赖，所以符合 3NF 的要求。</p>
+<p>对于<strong>系</strong>表，码为<strong>系名</strong>，主属性为<strong>系名</strong>，非主属性为<strong>系主任</strong>，不可能存在非主属性对于码的传递函数依赖（至少需要三个属性才可能存在传递函数依赖关系），所以符合 3NF 的要求。</p>
+<p>新的函数依赖关系如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/para3.png"></p>
+<p>新的数据表如下：</p>
+<p>选课表</p>
+<table>
+<thead>
+<tr>
+<th>学号</th>
+<th>课名</th>
+<th>分数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>101</td>
+<td>数学</td>
+<td>95</td>
+</tr>
+<tr>
+<td>101</td>
+<td>英语</td>
+<td>87</td>
+</tr>
+<tr>
+<td>101</td>
+<td>化学</td>
+<td>76</td>
+</tr>
+<tr>
+<td>102</td>
+<td>数学</td>
+<td>72</td>
+</tr>
+<tr>
+<td>102</td>
+<td>英语</td>
+<td>98</td>
+</tr>
+<tr>
+<td>102</td>
+<td>计算机</td>
+<td>88</td>
+</tr>
+<tr>
+<td>103</td>
+<td>数学</td>
+<td>82</td>
+</tr>
+<tr>
+<td>103</td>
+<td>法学</td>
+<td>82</td>
+</tr>
+</tbody></table>
+<p>学生表</p>
+<table>
+<thead>
+<tr>
+<th>学号</th>
+<th>姓名</th>
+<th>系名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>101</td>
+<td>小明</td>
+<td>经济</td>
+</tr>
+<tr>
+<td>102</td>
+<td>小红</td>
+<td>经济</td>
+</tr>
+<tr>
+<td>103</td>
+<td>小芳</td>
+<td>法律</td>
+</tr>
+</tbody></table>
+<p>系表</p>
+<table>
+<thead>
+<tr>
+<th>系名</th>
+<th>系主任</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>经济</td>
+<td>王强</td>
+</tr>
+<tr>
+<td>法律</td>
+<td>刘玲</td>
+</tr>
+</tbody></table>
+<p>接下来我们继续分析进行同样的操作是否还存在之前的问题？</p>
+<ol>
+<li><p>删除某个系中所有学生的记录</p>
+<p>该系的信息不会丢失。——有改进</p>
+</li>
+<li><p>插入一个尚无学生的新系信息：</p>
+<p>因为系表与学生表目前是独立的两张表，所以不影响。——有改进</p>
+</li>
+<li><p>数据冗余更少了。——有改进</p>
+</li>
+</ol>
+<p>由此可见，符合 3NF 要求的数据库设计，基本上解决了数据冗余过大、插入异常、修改异常、删除异常等问题。</p>
+<p>但是 3NF 会不会有什么问题呢？</p>
+<p>首先我们看这样一个问题：</p>
+<ol>
+<li>某公司有若干个仓库；</li>
+<li>每个仓库只能有一名管理员，一名管理员只能在一个仓库中工作；</li>
+<li>一个仓库中可以存放多种物品，一种物品也可以存放在不同的仓库中。每种物品在每个仓库中都有对应的数量。</li>
+</ol>
+<p>那么关系模式仓库（仓库名，管理员，物品名，数量）属于哪一级范式？</p>
+<p>答：</p>
+<p>已知函数依赖集：仓库名$\rightarrow$管理员，管理员$\rightarrow$仓库名，（仓库名，物品名）$\rightarrow$数量</p>
+<p>码：（管理员，物品名），（仓库名，物品名）</p>
+<p>主属性：仓库名、管理员、物品名</p>
+<p>非主属性：数量</p>
+<p>∵ <strong>不存在非主属性对码的部分函数依赖和传递函数依赖</strong></p>
+<p>∴ 此关系模式属于 3NF。</p>
+<p>基于此关系的关系可能如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>仓库名</th>
+<th>管理员</th>
+<th>物品名</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>上海仓</td>
+<td>张三</td>
+<td>iPhone 5s</td>
+<td>30</td>
+</tr>
+<tr>
+<td>上海仓</td>
+<td>张三</td>
+<td>iPad Air</td>
+<td>40</td>
+</tr>
+<tr>
+<td>北京仓</td>
+<td>李四</td>
+<td>iPhone 5s</td>
+<td>50</td>
+</tr>
+<tr>
+<td>北京仓</td>
+<td>李四</td>
+<td>iPad Mini</td>
+<td>60</td>
+</tr>
+</tbody></table>
+<p>数据依赖关系如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/para4.png"></p>
+<p>虽然上关系模式已经属于 3NF，那么这个关系模式是否存在问题呢？我们来看下面的操作：</p>
+<ol>
+<li><p>先新增加一个仓库，但尚未存放任何物品，是否可以为该仓库指派管理员？</p>
+<p>——不可以，因为物品名也是主属性，根据实体完整性的要求，主属性不能为空，<strong>插入异常</strong>。</p>
+</li>
+<li><p>某仓库被清空后，需要删除所有与这个仓库相关的物品存放记录，会带来什么问题？</p>
+<p>——仓库本身与管理员的信息也被随之删除了，<strong>删除异常</strong>。</p>
+</li>
+<li><p>如果某仓库更换了管理员，会带来什么问题？</p>
+<p>——这个仓库有几条物品存放记录，就要修改多少次管理员信息，<strong>修改异常</strong>。</p>
+</li>
+</ol>
+<p>从这里我们可以得出结论，在某些特殊情况下，即使关系模式符合 3NF 的要求，仍然存在着插入异常，修改异常与删除异常的问题，仍然不是 ”好“ 的设计。</p>
+<p>造成此问题的原因：存在着<strong>主属性</strong>对于码的部分函数依赖与传递函数依赖。（在此例中就是存在主属性<strong>仓库名</strong>对于码<strong>（管理员，物品名）</strong>的部分函数依赖。</p>
+<h1 id="BCNF"><a href="#BCNF" class="headerlink" title="BCNF"></a>BCNF</h1><p>定义：关系模式 $$R&lt;U,F&gt;\in 1NF$$，若 $$X\rightarrow Y$$ 且 $Y\nsubseteq X$ 时 X 必含有码，则 $$R&lt;U,F&gt;\in BCNF$$。</p>
+<p>人话：<strong>在 3NF 的基础上，消除了主属性对码的部分与传递函数依赖。</strong></p>
+<p>接下来我们看一下上表中的设计是否满足 BCNF。</p>
+<p>由上面的图知道，对于<strong>（管理员，仓库名）</strong>$\rightarrow$<strong>物品名</strong>，有<strong>管理员</strong>$\rightarrow$<strong>物品名</strong>，存在主属性<strong>仓库名</strong>对于码<strong>（管理员，物品名）</strong>的部分函数依赖。</p>
+<p>解决办法就是要在 3NF 的基础上消除<strong>主属性</strong>对于码的部分与传递函数依赖。</p>
+<p>仓库（仓库名，管理员）</p>
+<p>库存（仓库名，物品名，数量）</p>
+<p>新的数据表如下：</p>
+<p>仓库表：</p>
+<table>
+<thead>
+<tr>
+<th>仓库名</th>
+<th>管理员</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>上海仓</td>
+<td>张三</td>
+</tr>
+<tr>
+<td>北京仓</td>
+<td>李四</td>
+</tr>
+</tbody></table>
+<p>库存表：</p>
+<table>
+<thead>
+<tr>
+<th>仓库名</th>
+<th>物品名</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>上海仓</td>
+<td>iPhone 5s</td>
+<td>30</td>
+</tr>
+<tr>
+<td>上海仓</td>
+<td>iPad Air</td>
+<td>40</td>
+</tr>
+<tr>
+<td>北京仓</td>
+<td>iPhone 5s</td>
+<td>50</td>
+</tr>
+<tr>
+<td>北京仓</td>
+<td>iPad Mini</td>
+<td>60</td>
+</tr>
+</tbody></table>
+<p>新的数据依赖关系如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/para5.png"></p>
+<p>我们来看一下继续分析进行同样的操作是否还存在之前的问题？</p>
+<ol>
+<li><p>先新增加一个仓库，但尚未存放任何物品，是否可以为该仓库指派管理员？</p>
+<p>——可以，仓库表是独立的。</p>
+</li>
+<li><p>某仓库被清空后，需要删除所有与这个仓库相关的物品存放记录，会影响管理员吗？</p>
+<p>——不会，这时可以单独删除仓库的物品存放记录。</p>
+</li>
+<li><p>如果某仓库更换了管理员，会带来什么问题？</p>
+<p>——只需要单独修改仓库表中的管理员信息，不需要修改很多的表项。</p>
+</li>
+</ol>
+<p>这样，之前的插入异常，修改异常与删除异常的问题就被解决了。</p>
+<p>4NF 在 3NF 的基础上去除了多值依赖，未来补充一些样例。</p>
+<p>5NF 在 4NF 的基础上消除了连接依赖，这个了解一下就好。</p>
+<h1 id="补充信息"><a href="#补充信息" class="headerlink" title="补充信息"></a>补充信息</h1><p>上述定义均取自王珊的《数据库系统概论（第五版）》教材</p>
+<p>大部分内容引自<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/24696366">如何解释关系数据库的第一第二第三范式？</a></p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://www.qrzbing.cn/blog">qrzbing</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://www.qrzbing.cn/blog/2019/06/14/paradigm/">http://www.qrzbing.cn/blog/2019/06/14/paradigm/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/06/17/python%E5%AF%BC%E5%87%BA%E4%BE%9D%E8%B5%96/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">python导出依赖</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/06/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E8%AF%BE%E8%AE%BE/">
+        <span class="next-text nav-default">网络安全课设</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

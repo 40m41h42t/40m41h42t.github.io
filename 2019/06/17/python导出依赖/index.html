@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="python导出依赖"/><meta name="keywords" content="水, QRZ's Blog" /><link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/2019/06/17/python导出依赖/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>python导出依赖 - QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">python导出依赖
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-06-17
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>最近在导出 Python 项目依赖的时候遇到了些小问题。</p>
+<a id="more"></a>
+
+<p>导出依赖的方法：</p>
+<p>第一种，通过</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip freeze &gt; requirements.txt</span><br></pre></td></tr></table></figure>
+<p>导出，不过这种方法有个缺点，它会导出环境中的所有库。比如我导出了一个小项目，它包含这么多依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">certifi&#x3D;&#x3D;2016.2.28</span><br><span class="line">cycler&#x3D;&#x3D;0.10.0</span><br><span class="line">kiwisolver&#x3D;&#x3D;1.1.0</span><br><span class="line">matplotlib&#x3D;&#x3D;3.1.0</span><br><span class="line">numpy&#x3D;&#x3D;1.16.4</span><br><span class="line">pyparsing&#x3D;&#x3D;2.4.0</span><br><span class="line">python-dateutil&#x3D;&#x3D;2.8.0</span><br><span class="line">six&#x3D;&#x3D;1.12.0</span><br><span class="line">wincertstore&#x3D;&#x3D;0.2</span><br></pre></td></tr></table></figure>
+<p>很多情况我们并不需要，因此推荐下面的方法：</p>
+<p>第二种，安装 pipreqs，然后在项目目录下运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pipreqs .</span><br></pre></td></tr></table></figure>
+<p>这种方法只会导出该项目所需要的库。上面的项目通过 pipreqs 导出之后只剩下了这么一点点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">matplotlib&#x3D;&#x3D;3.1.0</span><br><span class="line">numpy&#x3D;&#x3D;1.16.4</span><br></pre></td></tr></table></figure>
+<p>比较推荐。</p>
+<p>另外，在 cmd 中运行的时候遇到了这样的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(test) C:\WINDOWS\system32&gt;conda deactivate</span><br><span class="line">Fatal Python error: init_sys_streams: can&#39;t initialize sys standard streams</span><br><span class="line">LookupError: unknown encoding: 65001</span><br><span class="line"></span><br><span class="line">Current thread 0x0000360c (most recent call first):</span><br></pre></td></tr></table></figure>
+<p>这是因为修改了操作系统编码所导致的。在 CMD 中设置环境变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> PYTHONIOENCODING=UTF-8</span><br></pre></td></tr></table></figure>
+<p>即可。如果是在 Powershell 中运行的话，需要</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$env</span>:PYTHONIOENCODING = <span class="string">&quot;UTF-8&quot;</span></span><br></pre></td></tr></table></figure>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/35176270/python-2-7-lookuperror-unknown-encoding-cp65001">Python 2.7 : LookupError: unknown encoding: cp65001 duplicate</a></p>
+<p>然而里面的这个方法：</p>
+<blockquote>
+<p>Also you can try to install <a target="_blank" rel="noopener" href="https://github.com/Drekin/win-unicode-console">win-unicode-console</a> with pip:</p>
+</blockquote>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install win-unicode-console</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Then reload your terminal and try to execute <code>pip --version</code></p>
+<p>However you can follow suggestions from <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/878972/windows-cmd-encoding-change-causes-python-crash?answertab=active#tab-top">Windows cmd encoding change causes Python crash</a> answer because you have <strong>same problem</strong>.</p>
+</blockquote>
+<p>好像并没有用，所以可能要把上面的环境变量写死。另外 VSCode 中好像没有遇到过这个问题。</p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://www.qrzbing.cn/blog">qrzbing</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://www.qrzbing.cn/blog/2019/06/17/python%E5%AF%BC%E5%87%BA%E4%BE%9D%E8%B5%96/">http://www.qrzbing.cn/blog/2019/06/17/python%E5%AF%BC%E5%87%BA%E4%BE%9D%E8%B5%96/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/blog/tags/%E6%B0%B4/">水</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/06/17/%E7%BB%8F%E5%85%B8%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">生产者消费者问题</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/06/14/paradigm/">
+        <span class="next-text nav-default">数据库中范式的概念</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

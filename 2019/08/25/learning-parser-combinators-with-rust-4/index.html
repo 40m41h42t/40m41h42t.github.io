@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="【译】通过 Rust 学习解析器组合器 — 第四部分"/><meta name="keywords" content="掘金翻译计划, QRZ's Blog" /><link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/2019/08/25/learning-parser-combinators-with-rust-4/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>【译】通过 Rust 学习解析器组合器 — 第四部分 - QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">【译】通过 Rust 学习解析器组合器 — 第四部分
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-08-25
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E3%80%90%E8%AF%91%E3%80%91%E9%80%9A%E8%BF%87-Rust-%E5%AD%A6%E4%B9%A0%E8%A7%A3%E6%9E%90%E5%99%A8%E7%BB%84%E5%90%88%E5%99%A8-%E2%80%94-%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86"><span class="toc-text">【译】通过 Rust 学习解析器组合器 — 第四部分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E5%B1%95%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%9C%BA%E4%BC%9A"><span class="toc-text">一个展现自己的机会</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%AD%90%E5%85%83%E7%B4%A0%E7%9A%84%E6%83%85%E5%86%B5"><span class="toc-text">有子元素的情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E4%BC%9A%E9%97%AE%E9%82%A3%E4%B8%AA-M-%E5%BC%80%E5%A4%B4%E7%9A%84%E5%8D%95%E8%AF%8D%E6%88%91%E6%98%AF%E5%90%A6%E5%BA%94%E8%AF%A5%E5%AE%8C%E6%88%90%E5%90%97%EF%BC%9F"><span class="toc-text">你会问那个 M 开头的单词我是否应该完成吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A9%BA%E6%A0%BC%EF%BC%8C%E6%9C%80%E7%BB%88%E7%89%88"><span class="toc-text">空格，最终版</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E4%BB%AC%E7%BB%88%E4%BA%8E%E5%AE%8C%E6%88%90%E4%BA%86%EF%BC%81"><span class="toc-text">我们终于完成了！</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%9C%E5%88%A9%E5%B0%8F%E7%8B%97"><span class="toc-text">胜利小狗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E8%B5%84%E6%BA%90"><span class="toc-text">更多资源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE"><span class="toc-text">协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%B3%A8"><span class="toc-text">脚注</span></a></li></ol></li></ol>
+    </div>
+  </div><div class="post-content"><blockquote>
+<ul>
+<li>原文地址：<a target="_blank" rel="noopener" href="https://bodil.lol/parser-combinators/">Learning Parser Combinators With Rust</a></li>
+<li>原文作者：<a target="_blank" rel="noopener" href="https://bodil.lol/">Bodil</a></li>
+<li>译文出自：<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner">掘金翻译计划</a></li>
+<li>本文永久链接：<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-4.md">https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-4.md</a></li>
+<li>译者：<a target="_blank" rel="noopener" href="https://github.com/40m41h42t">40m41h42t</a></li>
+<li>校对者：<a target="_blank" rel="noopener" href="https://github.com/suhanyujie">Samuel Jie</a>、<a target="_blank" rel="noopener" href="https://github.com/todaycoder001">dior</a></li>
+</ul>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="【译】通过-Rust-学习解析器组合器-—-第四部分"><a href="#【译】通过-Rust-学习解析器组合器-—-第四部分" class="headerlink" title="【译】通过 Rust 学习解析器组合器 — 第四部分"></a>【译】通过 Rust 学习解析器组合器 — 第四部分</h1><p>如果你没看过本系列的其他几篇文章，建议你按照顺序进行阅读：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-1.md">通过 Rust 学习解析器组合器 — 第一部分</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-2.md">通过 Rust 学习解析器组合器 — 第二部分</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-3.md">通过 Rust 学习解析器组合器 — 第三部分</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-4.md">通过 Rust 学习解析器组合器 — 第四部分</a></li>
+</ul>
+<h3 id="一个展现自己的机会"><a href="#一个展现自己的机会" class="headerlink" title="一个展现自己的机会"></a>一个展现自己的机会</h3><p>但是，稍等一下，它给我们提供了一个修复另一件可能有点麻烦的问题的机会。</p>
+<p>还记得我们最后写的解析器吗？由于我们的组合器是独立的函数，当我们嵌套一些“组合器”时，我们的代码开始变得有些难以理解。回想一下我们的 <code>quoted_string</code> 解析器：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">quoted_string</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;() -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, <span class="built_in">String</span>&gt; &#123;</span><br><span class="line">    map(</span><br><span class="line">        right(</span><br><span class="line">            match_literal(<span class="string">&quot;\&quot;&quot;</span>),</span><br><span class="line">            left(</span><br><span class="line">                zero_or_more(pred(any_char, |c| *c != <span class="string">&#x27;&quot;&#x27;</span>)),</span><br><span class="line">                match_literal(<span class="string">&quot;\&quot;&quot;</span>),</span><br><span class="line">            ),</span><br><span class="line">        ),</span><br><span class="line">        |chars| chars.into_iter().collect(),</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们可以在解析器而不是独立函数上创建那些组合器方法，那么可读性会更好。假如我们将组合器声明为 <code>Parser</code> trait 方法会怎么样呢？</p>
+<p>问题在于，如果我们这样做，我们的返回值就会失去依赖 <code>impl Trait</code> 的能力，因为 trait 声明中不允许使用 <code>impl Trait</code>。</p>
+<p>但现在我们有了 <code>BoxedParser</code>。 我们不能声明一个返回 <code>impl Parser&lt;&#39;a, A&gt;</code> 的 trait 方法，但我们肯定<strong>可以</strong>声明一个返回 <code>BoxedParser&lt;&#39;a, A&gt;</code> 的方法。</p>
+<p>最好的情况是我们甚至可以使用默认实现声明这些方法，这样我们就不必为每个实现 <code>Parser</code> 的类型重新实现每个组合器。</p>
+<p>让我们用 <code>map</code> 函数来尝试，通过如下方式扩展我们的 <code>Parser</code> trait 解析器：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Parser</span></span>&lt;<span class="symbol">&#x27;a</span>, Output&gt; &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fn</span> <span class="title">parse</span></span>(&amp;<span class="keyword">self</span>, input: &amp;<span class="symbol">&#x27;a</span> <span class="built_in">str</span>) -&gt; ParseResult&lt;<span class="symbol">&#x27;a</span>, Output&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fn</span> <span class="title">map</span></span>&lt;F, NewOutput&gt;(<span class="keyword">self</span>, map_fn: F) -&gt; BoxedParser&lt;<span class="symbol">&#x27;a</span>, NewOutput&gt;</span><br><span class="line">    <span class="keyword">where</span></span><br><span class="line">        <span class="keyword">Self</span>: <span class="built_in">Sized</span> + <span class="symbol">&#x27;a</span>,</span><br><span class="line">        Output: <span class="symbol">&#x27;a</span>,</span><br><span class="line">        NewOutput: <span class="symbol">&#x27;a</span>,</span><br><span class="line">        F: <span class="built_in">Fn</span>(Output) -&gt; NewOutput + <span class="symbol">&#x27;a</span>,</span><br><span class="line">    &#123;</span><br><span class="line">        BoxedParser::new(map(<span class="keyword">self</span>, map_fn))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有很多 <code>&#39;a</code>，但是它们都是必要的。幸运的是，我们仍然可以重新使用旧的组合函数 —— 并且，它有着额外的优势，我们不仅可以获得更好的语法来应用它们，还可以通过自动包装摆脱易引发争议的 <code>impl Trait</code> 方式。</p>
+<p>现在我们可以稍微改进一下 <code>quoted_string</code> 解析器：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">quoted_string</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;() -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, <span class="built_in">String</span>&gt; &#123;</span><br><span class="line">    right(</span><br><span class="line">        match_literal(<span class="string">&quot;\&quot;&quot;</span>),</span><br><span class="line">        left(</span><br><span class="line">            zero_or_more(pred(any_char, |c| *c != <span class="string">&#x27;&quot;&#x27;</span>)),</span><br><span class="line">            match_literal(<span class="string">&quot;\&quot;&quot;</span>),</span><br><span class="line">        ),</span><br><span class="line">    )</span><br><span class="line">    .map(|chars| chars.into_iter().collect())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>乍一看，很明显 <code>.map()</code> 会被 <code>right()</code> 的结果调用 。</p>
+<p>我们也可以给 <code>pair</code>、<code>left</code> 和 <code>right</code> 做同样的处理，但是在有这三个的情况下，我认为当它们是函数时会有更好的可读性，因为它们反映了 <code>pair</code> 输出的结构类型。如果你不同意的话，完全可以将它们添加到 trait 中，就像我们使用 <code>map</code> 一样，并且非常欢迎你继续将其作为练习去尝试它。</p>
+<p>然而，还有一个等待处理的函数是 <code>pred</code>。 让我们为它的 <code>Parser</code> trait 添加一个定义：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">pred</span></span>&lt;F&gt;(<span class="keyword">self</span>, pred_fn: F) -&gt; BoxedParser&lt;<span class="symbol">&#x27;a</span>, Output&gt;</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    <span class="keyword">Self</span>: <span class="built_in">Sized</span> + <span class="symbol">&#x27;a</span>,</span><br><span class="line">    Output: <span class="symbol">&#x27;a</span>,</span><br><span class="line">    F: <span class="built_in">Fn</span>(&amp;Output) -&gt; <span class="built_in">bool</span> + <span class="symbol">&#x27;a</span>,</span><br><span class="line">&#123;</span><br><span class="line">    BoxedParser::new(pred(<span class="keyword">self</span>, pred_fn))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>让我们用 <code>pred</code> 调用重写 <code>quoted_string</code> 中的那一行，如下所示：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zero_or_more(any_char.pred(|c| *c != <span class="string">&#x27;&quot;&#x27;</span>)),</span><br></pre></td></tr></table></figure>
+<p>这样阅读起来更好一些，并且我认为应该保留 <code>zero_or_more</code> —— 它读起来像是“零或更多的 <code>any_char</code> 并且应用了下面的判断”，对我来说这听起来是正确的。如果你愿意全力以赴的话，你也可以继续将 <code>zero_or_more</code> 和 <code>one_or_more</code> 移动到 trait 中。</p>
+<p>除了重写 <code>quoted_string</code> 之外，还要修复 <code>single_element</code> 中的 <code>map</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">single_element</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;() -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, Element&gt; &#123;</span><br><span class="line">    left(element_start(), match_literal(<span class="string">&quot;/&gt;&quot;</span>)).map(|(name, attributes)| Element &#123;</span><br><span class="line">        name,</span><br><span class="line">        attributes,</span><br><span class="line">        children: <span class="built_in">vec!</span>[],</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>让我们尝试取消注释 <code>element_start</code> 并用之前注释过的测试代码测试一下，看看结果是否变得更好。让我们恢复游戏中的代码并尝试运行测试……</p>
+<p>……嗯，是的，编译时间现在恢复正常了。你甚至可以移除文件顶部设置的类型大小，你完全不需要它了。</p>
+<p>我们只是装箱了两个 <code>map</code> 和一个 <code>pred</code> —— <strong>并且</strong>我们得到了更好的语规则！</p>
+<h3 id="有子元素的情况"><a href="#有子元素的情况" class="headerlink" title="有子元素的情况"></a>有子元素的情况</h3><p>现在让我们为父元素的开始标签编写解析器。它除了以 <code>&gt;</code> 而不是 <code>/&gt;</code> 结尾之外，其他几乎与 <code>single_element</code> 相同。它后面跟着零个或多个子项以及结束标签。首先我们需要解析实际的开始标签，让我们完成它。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">open_element</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;() -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, Element&gt; &#123;</span><br><span class="line">    left(element_start(), match_literal(<span class="string">&quot;&gt;&quot;</span>)).map(|(name, attributes)| Element &#123;</span><br><span class="line">        name,</span><br><span class="line">        attributes,</span><br><span class="line">        children: <span class="built_in">vec!</span>[],</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在，我们如何得到那些子元素？它们不是单个元素就是父元素本身，它们中也可能有零个或多个子元素，而我们拥有可靠的 <code>zero_or_more</code> 组合器，那我们该怎样输入呢？我们还有一个东西尚未处理，那就是多选解析器：<strong>既</strong>可以解析单个元素<strong>又</strong>可以解析父元素。</p>
+<p>为了达到目的，我们需要组合器按顺序尝试两个解析器：如果第一个解析器成功，任务就完成了，并返回它的结果。如果它失败了，我们会用<strong>相同的输入</strong>尝试第二个解析器，而不是返回错误。如果成功，那很好，如果没有，我们就会返回错误，因为这意味着我们的解析器都失败了，这是一个彻底的失败。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">either</span></span>&lt;<span class="symbol">&#x27;a</span>, P1, P2, A&gt;(parser1: P1, parser2: P2) -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, A&gt;</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    P1: Parser&lt;<span class="symbol">&#x27;a</span>, A&gt;,</span><br><span class="line">    P2: Parser&lt;<span class="symbol">&#x27;a</span>, A&gt;,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">move</span> |input| <span class="keyword">match</span> parser1.parse(input) &#123;</span><br><span class="line">        ok @ <span class="literal">Ok</span>(_) =&gt; ok,</span><br><span class="line">        <span class="literal">Err</span>(_) =&gt; parser2.parse(input),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这允许我们声明一个解析器 <code>element</code>，它匹配单个元素或父元素（现在，我们仅使用 <code>open_element</code> 来代表它，一旦我们有 <code>element</code> 我们就会处理子元素）。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">element</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;() -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, Element&gt; &#123;</span><br><span class="line">    either(single_element(), open_element())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在让我们为结束标签添加一个解析器。它有个有趣的属性，必须以开始标签匹配，这意味着解析器必须知道开始标签的名称是什么。但这就是函数参数的用途，是吧？</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">close_element</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;(expected_name: <span class="built_in">String</span>) -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, <span class="built_in">String</span>&gt; &#123;</span><br><span class="line">    right(match_literal(<span class="string">&quot;&lt;/&quot;</span>), left(identifier, match_literal(<span class="string">&quot;&gt;&quot;</span>)))</span><br><span class="line">        .pred(<span class="keyword">move</span> |name| name == &amp;expected_name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那个 <code>pred</code> 组合器证明非常有用，不是吗？</p>
+<p>现在，让我们把它放在一起，用于实现完整的父元素解析器，子元素解析器和所有其他的解析器：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">parent_element</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;() -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, Element&gt; &#123;</span><br><span class="line">    pair(</span><br><span class="line">        open_element(),</span><br><span class="line">        left(zero_or_more(element()), close_element(…oops)),</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>哎呀，我们现在该如何将该参数传递给 <code>close_element</code> 呢？我想这是我们要实现的最后一个组合器。</p>
+<p>我们现在离完成非常接近了。一旦我们解决了最后一个让 <code>parent_element</code> 工作的问题，我们可以用实现的新的 <code>parent_element</code> 替换 <code>element</code> 解析器中的 <code>open_element</code> 占位符，就这样，我们实现了一个完全可用的 XML 解析器。</p>
+<p>还记得我说我们之后会回到 <code>and_then</code> 吗？就是现在回到了 <code>and_then</code>。实际上，我们需要的组合器是 <code>and_then</code>：我们需要一些带有解析器的东西，和一个获取解析器结果并返回<strong>新</strong>解析器的函数，之后我们将运行它。它有点像 <code>pair</code>，但它只是在元组中收集两个结果，我们通过函数将它们串联起来。这也是 <code>and_then</code> 与 <code>Result</code> 和 <code>Option</code> 一起使用的方法，但它更容易理解，因为 <code>Result</code> 和 <code>Option</code> 不是真的<strong>做</strong>任何事情，它们只是持有一些数据的东西（或不是，视情况而定）。</p>
+<p>所以让我们尝试编写一个它的实现。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">and_then</span></span>&lt;<span class="symbol">&#x27;a</span>, P, F, A, B, NextP&gt;(parser: P, f: F) -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, B&gt;</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    P: Parser&lt;<span class="symbol">&#x27;a</span>, A&gt;,</span><br><span class="line">    NextP: Parser&lt;<span class="symbol">&#x27;a</span>, B&gt;,</span><br><span class="line">    F: <span class="built_in">Fn</span>(A) -&gt; NextP,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">move</span> |input| <span class="keyword">match</span> parser.parse(input) &#123;</span><br><span class="line">        <span class="literal">Ok</span>((next_input, result)) =&gt; f(result).parse(next_input),</span><br><span class="line">        <span class="literal">Err</span>(err) =&gt; <span class="literal">Err</span>(err),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看类型会有很多类型变量，但我们知道输入解析器 <code>P</code> 的结果类型为 <code>A</code>。然而我们的函数 <code>F</code>，其中的 <code>map</code> 有一个从 <code>A</code> 到 <code>B</code> 的函数，此两者之间关键的区别是 <code>and_then</code> 会从 <code>A</code> 获取一个函数到<strong>一个新的解析器</strong> <code>NextP</code>，其结果类型为 <code>B</code>。最终的结果类型是<code>B</code>，因此我们可以假设从 <code>NextP</code> 输出的任何东西都是最终的结果。</p>
+<p>代码有点复杂：我们从运行输入解析器开始，如果失败，它就会失败并且代表我们已经完成了。但如果成功，我们先在结果上调用函数 <code>f</code>（类型为<code>A </code>），<code>f(result)</code> 的返回是一个新的解析器，并带有一个类型为 <code>B</code> 的结果。我们在下一位输入上运行<strong>这个</strong>解析器，并直接返回结果。如果失败，那就失败了，如果成功，我们就会得到类型为 <code>B</code> 的值。</p>
+<p>再一次：我们首先运行 <code>P</code> 类型的解析器，如果成功，我们以解析器 <code>P</code> 的结果作为参数调用函数 <code>f</code> 来得到我们的下一个类型为 <code>NextP</code> 的解析器，接着我们继续运行，并得到最后的结果。</p>
+<p>让我们直接将它添加到 <code>Parser</code> trait中，因为这个像 <code>map</code> 一样，以这种方式肯定会更容易阅读。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">and_then</span></span>&lt;F, NextParser, NewOutput&gt;(<span class="keyword">self</span>, f: F) -&gt; BoxedParser&lt;<span class="symbol">&#x27;a</span>, NewOutput&gt;</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    <span class="keyword">Self</span>: <span class="built_in">Sized</span> + <span class="symbol">&#x27;a</span>,</span><br><span class="line">    Output: <span class="symbol">&#x27;a</span>,</span><br><span class="line">    NewOutput: <span class="symbol">&#x27;a</span>,</span><br><span class="line">    NextParser: Parser&lt;<span class="symbol">&#x27;a</span>, NewOutput&gt; + <span class="symbol">&#x27;a</span>,</span><br><span class="line">    F: <span class="built_in">Fn</span>(Output) -&gt; NextParser + <span class="symbol">&#x27;a</span>,</span><br><span class="line">&#123;</span><br><span class="line">    BoxedParser::new(and_then(<span class="keyword">self</span>, f))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>好的，现在这么做都有什么好处？</p>
+<p>首先，我们<strong>几乎</strong>可以使用它来实现 <code>pair</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">pair</span></span>&lt;<span class="symbol">&#x27;a</span>, P1, P2, R1, R2&gt;(parser1: P1, parser2: P2) -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, (R1, R2)&gt;</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    P1: Parser&lt;<span class="symbol">&#x27;a</span>, R1&gt; + <span class="symbol">&#x27;a</span>,</span><br><span class="line">    P2: Parser&lt;<span class="symbol">&#x27;a</span>, R2&gt; + <span class="symbol">&#x27;a</span>,</span><br><span class="line">    R1: <span class="symbol">&#x27;a</span> + <span class="built_in">Clone</span>,</span><br><span class="line">    R2: <span class="symbol">&#x27;a</span>,</span><br><span class="line">&#123;</span><br><span class="line">    parser1.and_then(<span class="keyword">move</span> |result1| parser2.map(<span class="keyword">move</span> |result2| (result1.clone(), result2)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它看起来非常简洁，但是有一个问题：<code>parser2.map()</code> 使用 <code>parser2</code> 来创建封装好的解析器，包装函数是 <code>Fn</code>，而不是 <code>FnOnce</code>，因此它不允许使用 <code>parser2</code> 解析器，我们只能参考它。换句话说，这是 Rust 的问题。在更高级别的语言中，这些事情不是问题，它们可能会用更优雅的方式定义 <code>pair</code>。</p>
+<p>但是，即使在 Rust 中我们也可以使用该函数来延迟生成 <code>close_element</code> 解析器的正确版本，或者换句话说，我们可以通过传递参数获取解析器。</p>
+<p>回顾我们之前失败的尝试：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">parent_element</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;() -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, Element&gt; &#123;</span><br><span class="line">    pair(</span><br><span class="line">        open_element(),</span><br><span class="line">        left(zero_or_more(element()), close_element(…oops)),</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用 <code>and_then</code>，我们现在可以通过使用这个函数构造正确版本的 <code>close_element</code> 来实现这一点。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">parent_element</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;() -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, Element&gt; &#123;</span><br><span class="line">    open_element().and_then(|el| &#123;</span><br><span class="line">        left(zero_or_more(element()), close_element(el.name.clone())).map(<span class="keyword">move</span> |children| &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">mut</span> el = el.clone();</span><br><span class="line">            el.children = children;</span><br><span class="line">            el</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它现在看起来有点复杂，因为 <code>and_then</code> 必须继续通过 <code>open_element()</code> 调用，我们会在那里找到跳转到 <code>close_element</code> 的名字。这意味着 <code>open_element</code> 之后的其它解析器都必须在 <code>and_then</code> 闭包内构造。此外，由于闭包现在是 <code>open_element</code> 的 <code>Element</code> 结果的唯一接收者，我们返回的解析器也必须向前传递该信息。</p>
+<p>我们在生成的解析器上 <code>map</code> 的内部闭包能从外部闭包中引用 <code>Element</code>(<code>el</code>)。由于我们在 <code>Fn</code> 中只能引用它一次，因此我们必须 <code>clone()</code> 它。我们取内部解析器的结果（子元素的 <code>Vec&lt;Element&gt;</code> ）并将它添加到我们克隆的 <code>Element</code> 中，并将其作为最终结果返回。</p>
+<p>我们现在需要做的就是回到 <code>element</code> 解析器并确保将 <code>open_element</code> 改为 <code>parent_element</code>，这样它会解析整个元素结构而不仅仅是它的开头，我相信我们已经完成解析器组合器了！</p>
+<h3 id="你会问那个-M-开头的单词我是否应该完成吗？"><a href="#你会问那个-M-开头的单词我是否应该完成吗？" class="headerlink" title="你会问那个 M 开头的单词我是否应该完成吗？"></a>你会问那个 M 开头的单词我是否应该完成吗？</h3><p>还记得我们谈到过如何将 <code>map</code> 模式称为 Haskell 星球上的“函子（functor）”吗？</p>
+<p><code>and_then</code> 模式是另一个你会在 Rust 中时常看到的东西，它通常与 <code>map</code> 出现在相同的位置。它在 <code>迭代器（Iterator）</code>上被称为 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.flat_map"><code>flat_map</code></a>，但它与 Rest 的模式相同。</p>
+<p>这个奇特的单词是“单子（monad）”。如果你有一个 <code>Thing&lt;A&gt;</code>，并且你有一个 <code>and_then</code> 函数可以将一个函数从 <code>A</code> 传递给 <code>Thing&lt;B&gt;</code>，那么相反，现在你有了一个新的 <code> Thing&lt;B&gt;</code> ，这就是一个 monad。</p>
+<p>就像当你有 <code>Option&lt;A&gt;</code> 的时候，函数可能会被立即调用，我们已经知道它是 <code>Some(A)</code> 还是 <code>None</code>，所以如果是 <code>Some(A)</code> 我们直接应用函数，并输出 <code>Some(B)</code>。</p>
+<p>它也可能被称为延迟调用。 例如，如果你有一个仍然等待解决的 <code>Future&lt;A&gt;</code>，它不会通过 <code>and_then</code> 立即调用函数创建一个 <code>Future&lt;B&gt;</code>，而是创建一个新的<code>Future&lt;B&gt;</code>，既包含 <code>Future&lt;A&gt;</code> 又包含函数，然后等待 <code>Future&lt;A&gt;</code> 完成。 当它发生的时候，它会调用带有 <code>Future&lt;A&gt;</code> 结果的函数，而鲍勃是你的叔叔 <sup><a href="#note1">[1]</a></sup>，你会得到 <code>Future&lt;B&gt;</code>。 换句话说，在 <code>Future</code> 的情况下，你可以将传递给 <code>and_then</code> 的函数视为<strong>回调函数</strong>，因为它在完成时会被原始的未来的结果调用。它也比这更有意思，因为它返回了一个<strong>新的</strong> <code>Future</code>，它可能已经或可能没有被解析，所以它是一种<strong>连接</strong>未来状态的方法。</p>
+<p>然而，与函子一样，Rust 的类型系统目前还不能表达 monad，所以我们只需记住这种模式被叫做 monad，而且相当令人失望的是，与在互联网上所描述的相反，它与 burrito 没什么关系。让我们继续前进。</p>
+<h3 id="空格，最终版"><a href="#空格，最终版" class="headerlink" title="空格，最终版"></a>空格，最终版</h3><p>最后一件事了。</p>
+<p>我们现在应该有了一个能够解析一些 XML 的解析器，但它不太支持空格。标签之间应该允许任意数量的空格，这样我们就可以自由地在我们的标签之间插入换行符（原则上，在标识符和文字之间应该允许空格，比如 <code>&lt;div /&gt;</code>，但让我们跳过它）。</p>
+<p>此时我们应该能够毫不费力地组装一个快速组合器。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">whitespace_wrap</span></span>&lt;<span class="symbol">&#x27;a</span>, P, A&gt;(parser: P) -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, A&gt;</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    P: Parser&lt;<span class="symbol">&#x27;a</span>, A&gt;,</span><br><span class="line">&#123;</span><br><span class="line">    right(space0(), left(parser, space0()))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们将 <code>element</code> 包装在其中，它将忽略 <code>element</code> 周围的所有前导和尾随的空格，这意味着我们可以自由地使用我们希望的任意数量的换行符和缩进。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">element</span></span>&lt;<span class="symbol">&#x27;a</span>&gt;() -&gt; <span class="keyword">impl</span> Parser&lt;<span class="symbol">&#x27;a</span>, Element&gt; &#123;</span><br><span class="line">    whitespace_wrap(either(single_element(), parent_element()))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="我们终于完成了！"><a href="#我们终于完成了！" class="headerlink" title="我们终于完成了！"></a>我们终于完成了！</h3><p>我想我们做到了！让我们写一个集成测试来庆祝一下。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">xml_parser</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> doc = r#<span class="string">&quot;</span></span><br><span class="line"><span class="string">        &lt;top label=&quot;</span>Top<span class="string">&quot;&gt;</span></span><br><span class="line"><span class="string">            &lt;semi-bottom label=&quot;</span>Bottom<span class="string">&quot;/&gt;</span></span><br><span class="line"><span class="string">            &lt;middle&gt;</span></span><br><span class="line"><span class="string">                &lt;bottom label=&quot;</span>Another bottom<span class="string">&quot;/&gt;</span></span><br><span class="line"><span class="string">            &lt;/middle&gt;</span></span><br><span class="line"><span class="string">        &lt;/top&gt;&quot;</span>#;</span><br><span class="line">    <span class="keyword">let</span> parsed_doc = Element &#123;</span><br><span class="line">        name: <span class="string">&quot;top&quot;</span>.to_string(),</span><br><span class="line">        attributes: <span class="built_in">vec!</span>[(<span class="string">&quot;label&quot;</span>.to_string(), <span class="string">&quot;Top&quot;</span>.to_string())],</span><br><span class="line">        children: <span class="built_in">vec!</span>[</span><br><span class="line">            Element &#123;</span><br><span class="line">                name: <span class="string">&quot;semi-bottom&quot;</span>.to_string(),</span><br><span class="line">                attributes: <span class="built_in">vec!</span>[(<span class="string">&quot;label&quot;</span>.to_string(), <span class="string">&quot;Bottom&quot;</span>.to_string())],</span><br><span class="line">                children: <span class="built_in">vec!</span>[],</span><br><span class="line">            &#125;,</span><br><span class="line">            Element &#123;</span><br><span class="line">                name: <span class="string">&quot;middle&quot;</span>.to_string(),</span><br><span class="line">                attributes: <span class="built_in">vec!</span>[],</span><br><span class="line">                children: <span class="built_in">vec!</span>[Element &#123;</span><br><span class="line">                    name: <span class="string">&quot;bottom&quot;</span>.to_string(),</span><br><span class="line">                    attributes: <span class="built_in">vec!</span>[(<span class="string">&quot;label&quot;</span>.to_string(), <span class="string">&quot;Another bottom&quot;</span>.to_string())],</span><br><span class="line">                    children: <span class="built_in">vec!</span>[],</span><br><span class="line">                &#125;],</span><br><span class="line">            &#125;,</span><br><span class="line">        ],</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="literal">Ok</span>((<span class="string">&quot;&quot;</span>, parsed_doc)), element().parse(doc));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它会由于缺少闭合标签而导致失败，只是为了确保我们能够做到这一点：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">mismatched_closing_tag</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> doc = r#<span class="string">&quot;</span></span><br><span class="line"><span class="string">        &lt;top&gt;</span></span><br><span class="line"><span class="string">            &lt;bottom/&gt;</span></span><br><span class="line"><span class="string">        &lt;/middle&gt;&quot;</span>#;</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="literal">Err</span>(<span class="string">&quot;&lt;/middle&gt;&quot;</span>), element().parse(doc));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>好消息是当返回值缺少闭合标签时会抛出错误。坏消息是它实际上并没有<strong>指明</strong>问题是由于缺少闭合标签导致的，只是标记了错误在<strong>哪里</strong>。不过它总比没有好，但老实说，随着错误信息的发生，它看起来会非常糟糕。 但是实际上让它产生正确的错误信息是另一个主题，也许至少是一篇一样长的文章。</p>
+<p>让我们专注于好消息上吧：我们从头开始用解析器组合器来编写一个编译器！我们知道解析器形成了一个函子（functor）和一个单子（monad），所以你现在可以在派对中用你知道的令人生畏的范畴理论知识给人们留下深刻的印象 <sup><a href="#note2">[2]</a></sup>。</p>
+<p>最重要的是，我们现在知道解析器组合器是如何从头开始工作的了。已经没人能阻止我们了！</p>
+<h3 id="胜利小狗"><a href="#胜利小狗" class="headerlink" title="胜利小狗"></a>胜利小狗</h3><p><img src="https://bodil.lol/parser-combinators/many-puppies.gif"></p>
+<h3 id="更多资源"><a href="#更多资源" class="headerlink" title="更多资源"></a>更多资源</h3><p>首先，我很严谨地用严格的 Rusty 术语向你解释 monad，我知道如果我没有把你指向<a target="_blank" rel="noopener" href="https://homepages.inf.ed.ac.uk/wadler/papers/marktoberdorf/baastad.pdf">他的开创性论文</a>，那么 Phil Wadler 会对我非常不满，因为这篇论文更加令人兴奋 —— 它包含了他们是如何关联解析器组合器的。</p>
+<p>本文的想法与 <a target="_blank" rel="noopener" href="https://crates.io/crates/pom"><code>pom</code></a> 解析器组合器背后的想法极为相似，如果你希望用相同的风格使用解析器组合器的话，我极力推荐它。</p>
+<p>Rust 解析器组合器中的最先进的依然是 <a target="_blank" rel="noopener" href="https://crates.io/crates/nom"><code>nom</code></a>，在某种程度上之前提到的 <code>pom</code> 明显是它衍生的命名（没有比它更高的赞美了）。但它采取的方法与我们今天在这里的设计截然不同。</p>
+<p>Rust 的另一个流行的解析器组合器库是 <a target="_blank" rel="noopener" href="https://crates.io/crates/combine"><code>combine</code></a>，它也值得一看。</p>
+<p>Haskell 的开创性解析器组合器库是 <a target="_blank" rel="noopener" href="http://hackage.haskell.org/package/parsec">Parsec</a>。</p>
+<p>最后，我在 Graham Hutton 的书 <a target="_blank" rel="noopener" href="http://www.cs.nott.ac.uk/%7Epszgmh/pih.html"><strong>Haskell 编程</strong></a>中第一次认识到解析器组合器，这本书非常值得一读，并且可以教你有关 Haskell 的知识。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-1.md">通过 Rust 学习解析器组合器 — 第一部分</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-2.md">通过 Rust 学习解析器组合器 — 第二部分</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-3.md">通过 Rust 学习解析器组合器 — 第三部分</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-4.md">通过 Rust 学习解析器组合器 — 第四部分</a></li>
+</ul>
+<h2 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h2><p>本文版权归 Bodil Stokke 所有，并受知识共享署名 - 非商业性使用 - 相同方式共享 4.0 国际许可。要查看此许可证的副本，请访问 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">http://creativecommons.org/licenses/by-nc-sa/4.0/</a> 。</p>
+<h2 id="脚注"><a href="#脚注" class="headerlink" title="脚注"></a>脚注</h2><ol>
+<li><a name="note1"></a> 他并不真是你的叔叔。</li>
+<li><a name="note2"></a> 请不要在派对上做那样的人。</li>
+</ol>
+<blockquote>
+<p>如果发现译文存在错误或其他需要改进的地方，欢迎到 <a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner">掘金翻译计划</a> 对译文进行修改并 PR，也可获得相应奖励积分。文章开头的 <strong>本文永久链接</strong> 即为本文在 GitHub 上的 MarkDown 链接。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner">掘金翻译计划</a> 是一个翻译优质互联网技术文章的社区，文章来源为 <a target="_blank" rel="noopener" href="https://juejin.im/">掘金</a> 上的英文分享文章。内容覆盖 <a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner#android">Android</a>、<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner#ios">iOS</a>、<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner#%E5%89%8D%E7%AB%AF">前端</a>、<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner#%E5%90%8E%E7%AB%AF">后端</a>、<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner#%E5%8C%BA%E5%9D%97%E9%93%BE">区块链</a>、<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner#%E4%BA%A7%E5%93%81">产品</a>、<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner#%E8%AE%BE%E8%AE%A1">设计</a>、<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner#%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD">人工智能</a>等领域，想要查看更多优质译文请持续关注 <a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner">掘金翻译计划</a>、<a target="_blank" rel="noopener" href="http://weibo.com/juejinfanyi">官方微博</a>、<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/juejinfanyi">知乎专栏</a>。</p>
+</blockquote>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://www.qrzbing.cn/blog">qrzbing</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://www.qrzbing.cn/blog/2019/08/25/learning-parser-combinators-with-rust-4/">http://www.qrzbing.cn/blog/2019/08/25/learning-parser-combinators-with-rust-4/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/blog/tags/%E6%8E%98%E9%87%91%E7%BF%BB%E8%AF%91%E8%AE%A1%E5%88%92/">掘金翻译计划</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/09/15/angr-newhand-1/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">angr 入门（一）</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/07/22/googlectf2019-secureboot/">
+        <span class="next-text nav-default">Google CTF 2019 - Secure Boot 题解</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

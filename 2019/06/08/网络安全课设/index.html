@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="网络安全课设"/><link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/2019/06/08/网络安全课设/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>网络安全课设 - QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">网络安全课设
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-06-08
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Scanner"><span class="toc-text">Scanner</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sniffer"><span class="toc-text">Sniffer</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>最近好像做了挺多事情，但是没有系统地整理输出。这几天做的网络安全课程设计还是挺好玩的，作业是做扫描器和嗅探器，在这个过程中学到了不少 socket 编程的知识（当然，仅限第一个实验）。</p>
+<a id="more"></a>
+
+<p>具体的代码位于 <a target="_blank" rel="noopener" href="https://github.com/40m41h42t/NUAA-CyberSec">https://github.com/40m41h42t/NUAA-CyberSec</a> ，代码写的很丑。在写的过程中有过一些酷炫的想法，然而随着 deadline 的到来只能 Keep it simple, stupid。具体的感受如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/img1559996505424.jpeg"></p>
+<p>在这个过程中算是大概了解了计算机网络编程的知识。</p>
+<h2 id="Scanner"><a href="#Scanner" class="headerlink" title="Scanner"></a>Scanner</h2><p>扫描器的要求如下：</p>
+<blockquote>
+<p>Scanner 简单网络扫描程序实现</p>
+<ul>
+<li><p>实验目的：熟悉并实现网络扫描的基本原理，了解网络扫描的几种常用的方法。</p>
+</li>
+<li><p>实验环境：Linux，C 语言</p>
+</li>
+<li><p>实验内容：</p>
+<p>用 C 语言编写一个在 Linux 下扫描局域网内主机的程序。要求可以显示局域网内的主机名列表，并可以显示哪些主机开放了哪些端口。</p>
+</li>
+</ul>
+</blockquote>
+<p>最著名的扫描器应该是 <a target="_blank" rel="noopener" href="https://nmap.org/">nmap</a> 无疑了。我参考了它扫描的方法来完成自己的扫描器。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sP 192.168.1.1/24</span><br></pre></td></tr></table></figure>
+<p>可以用 TCP SYN 的方法扫描该网段的 IP。在扫描的过程中抓包，我们就可以轻松看到 nmap 发包的过程。</p>
+<ul>
+<li>扫描局域网内主机可以通过发送接收 ARP 报文来实现。</li>
+<li>显示局域网内的主机名列表可以通过 DNS 报文实现。</li>
+<li>显示哪些主机开放了哪些端口可以通过 TCP SYN 扫描实现。</li>
+</ul>
+<p>然而，对于我这种菜鸡来说，虽然梦想是美好的，写起代码的时候就会感觉各种坑爹。。</p>
+<p>整个扫描器的设计如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06scanner2.png"></p>
+<p>初始化网络信息会从设定的网卡编号中得到网络信息，其实 socket 编程也并不难，重要的是理解各个层级之间的关系。不过对我这种习惯了写 Python 的萌新来说，C 的各种定义真是让人头大。。在得到本机当前网卡的 IP 和子网掩码之后，我们就可以得到整个内网的网段了。接下来就是发送并接收 ARP 报文，获取内网的存活主机。</p>
+<p>扫描存活主机的设计如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/scanner3.png"></p>
+<p>嗯。。父进程（也就是自己）接收 ARP 报文，子进程发送 ARP 报文，其实可以开线程的。</p>
+<p>ARP 报文的格式如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/wiki/network/arp-1.png"></p>
+<p>构造 ARP 报文花了我不少时间，中文的资料太坑爹了。。</p>
+<p>接收的时候，问题出现了，怎么样才能确定所有回复的 ARP 报文都被接收了呢？我有几种想法：</p>
+<ul>
+<li>首先，增大发送 ARP 包的间隔，让父进程能收到所有的报文。</li>
+<li>其次，可以发送多次请求，最后整理排序即可。</li>
+<li>除此之外，设定接收 ARP 的超时时间为 5s，这样可以避免无限收包的死循环。</li>
+</ul>
+<p>当然我的方法就很菜了。。如果直接用 time.h 中的时间结构体的话，在计算时间获取时间上会消耗大量时间，设定为 5s，最后跑起来可能就 6、7s 了，有时候不知道为什么还会卡住，消耗了大量时间却没有获取到所有的流量包。于是我改用 <code>alarm</code> 函数设定时间，用 <code>setjmp</code> 跳回父函数，简直是不能再窒息的方法，不知道有没有什么更好的设定计时器跳出循环的办法。。</p>
+<p>接下来要获取主机名称，查找的时候发现有一个神奇的函数叫 <code>gethostbyaddr</code>，完全不用自己构造报文，太舒服了。。</p>
+<p>最后本应该实现 TCP SYN 扫描的，但是由于我之前多次咕咕咕的原因到了 ddl，于是我只好换了一种比较简单（？）的 TCP connect 方法。</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/scanner4.png"></p>
+<p>呜呜呜其实是照着大白学长的来写了，以后有时间（咕咕咕）再加上 TCP SYN 的扫描吧，我已经留好接口了，就差实现了！咕咕咕</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">ScannerThread</span><span class="params">(<span class="keyword">void</span> *args)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ScanArgs *p = (ScanArgs *)args;</span><br><span class="line">    p-&gt;result = SYNScan(p-&gt;ip, p-&gt;port);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Sniffer"><a href="#Sniffer" class="headerlink" title="Sniffer"></a>Sniffer</h2><p>嗅探器的要求如下：</p>
+<blockquote>
+<p>网络嗅探器</p>
+<ul>
+<li>实验目的：熟悉并实现网络监听的基本原理</li>
+<li>实验环境：Linux/Windows，C 语言</li>
+<li>实验内容：<ul>
+<li>用 C 语言编写一个监听网络流量的程序，并对截取的报文进行解析，</li>
+</ul>
+</li>
+<li>实验结果<ul>
+<li>提交实验报告</li>
+<li>作为后续信息安全综合实验的基础</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>这个本来也应该用 <code>socket</code> 来写的，读取原始套接字，解析二层 MAC，三层 IP，以及之后的 TCP/UDP 等协议的。有一张图片可以画出各个网络层之间的关系：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/wiki/network/model1.png"></p>
+<p>但是随着 DDL 的临近，我发现了 <code>libpcap</code> 库。。于是一切都变得简单了起来 &lt;- 一个造轮子失败的人QAQ</p>
+<p>对于 <code>libpacp</code> 库，<a target="_blank" rel="noopener" href="http://www.tcpdump.org/pcap.html">Programming with pcap</a> 把所有用到的嗅探器需要的方法都告诉我了，我甚至可以直接用上面的代码。。。理解第一，理解万岁.jpg。于是 Sniffer 只花了一小会就写完了。。</p>
+<p>其结构如下：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/2019/06/sniffer3.png"></p>
+<p>其实我也是想解析其他报文的，不过果然咕咕咕是最舒服的（</p>
+<p><code>pcap_loop</code> 函数已经把我们所有需要做的工作封装好了。我们在函数中可以通过最后一个参数得到所有的报文信息，然后再按照上面的文档解析报文。我只解析了三种协议，从以太网的 Ethernet 头部就不说了，只有 <code>MAC_dst</code>、<code>MAC_src</code>、<code>ether_type</code> 三个变量。IP 和 TCP 的报头分别为：</p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/wiki/network/ipv4-1.png"></p>
+<p><img src="https://raw.githubusercontent.com/40m41h42t/Images/master/wiki/network/tcp-1.png"></p>
+<p>嗯，上面的都是我闲的无聊的时候画的。。有画的时间写点代码多好。。</p>
+<p>所以最后感觉也没做什么工作，要实在说是有的话算是加深了一点点对计网的理解？唔，大概就是这样，又水了一篇博客。。</p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://www.qrzbing.cn/blog">qrzbing</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://www.qrzbing.cn/blog/2019/06/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E8%AF%BE%E8%AE%BE/">http://www.qrzbing.cn/blog/2019/06/08/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E8%AF%BE%E8%AE%BE/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/06/14/paradigm/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">数据库中范式的概念</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/04/27/CISCN2019-strange-int/">
+        <span class="next-text nav-default">CISCN2019 strange_int 题解</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

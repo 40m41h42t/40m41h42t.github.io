@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><section id="posts" class="posts"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2020/04/18/data-infector/">data 段代码注入</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-04-18
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>我们可以通过向 data 段劫持代码并将程序的运行流劫持到这里实现我们希望的功能（包括执行恶意代码、软件保护等）。这一过程中可能是最复杂也是最重要的部分就是怎样将新增的代码注入到 data 段中了。</p>
+          <div class="read-more">
+            <a href="/blog/2020/04/18/data-infector/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2019/12/31/my-2019/">我的 2019 总结</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-12-31
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>学习一下赵神做一下年终总结，虽然自己很菜就是啦。</p>
+          <div class="read-more">
+            <a href="/blog/2019/12/31/my-2019/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2019/10/04/angr-newhand-3/">angr 入门（三）</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-10-04
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>本篇主要记录了新手使用 angr 对内存和寄存器操作的记录。题目分析顺序参考了这篇文章：<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/4052">深入浅出angr（三）</a></p>
+          <div class="read-more">
+            <a href="/blog/2019/10/04/angr-newhand-3/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2019/10/01/from-0-to-Travis/">使用 Travis CI 自动部署 Hexo 博客</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-10-01
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>最近一直在 Manjaro 和 Windows 之间切换，现在学习都已经在 Manjaro 上进行了，但是博客还在 Windows 上。虽然迁移过来并不难，但还是太麻烦了。另外写博客还要开电脑，的确有点麻烦。作为一个懒人当然是动动手自动推送最好，我就想到了用 <a target="_blank" rel="noopener" href="https://travis-ci.org/">Travis CI</a> 来自动部署博客。</p>
+          <div class="read-more">
+            <a href="/blog/2019/10/01/from-0-to-Travis/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2019/09/30/angr-newhand-2/">angr 入门（二）</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-30
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>这里更进一步地学习了 angr 的一些知识点。</p>
+          <div class="read-more">
+            <a href="/blog/2019/09/30/angr-newhand-2/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2019/09/15/angr-newhand-1/">angr 入门（一）</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-15
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>让我们从官方文档走起。</p>
+          <div class="read-more">
+            <a href="/blog/2019/09/15/angr-newhand-1/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2019/08/25/learning-parser-combinators-with-rust-4/">【译】通过 Rust 学习解析器组合器 — 第四部分</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-08-25
+        </span></div>
+    </header>
+
+    <div class="post-content"><blockquote>
+<ul>
+<li>原文地址：<a target="_blank" rel="noopener" href="https://bodil.lol/parser-combinators/">Learning Parser Combinators With Rust</a></li>
+<li>原文作者：<a target="_blank" rel="noopener" href="https://bodil.lol/">Bodil</a></li>
+<li>译文出自：<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner">掘金翻译计划</a></li>
+<li>本文永久链接：<a target="_blank" rel="noopener" href="https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-4.md">https://github.com/xitu/gold-miner/blob/master/TODO1/learning-parser-combinators-with-rust-4.md</a></li>
+<li>译者：<a target="_blank" rel="noopener" href="https://github.com/40m41h42t">40m41h42t</a></li>
+<li>校对者：<a target="_blank" rel="noopener" href="https://github.com/suhanyujie">Samuel Jie</a>、<a target="_blank" rel="noopener" href="https://github.com/todaycoder001">dior</a></li>
+</ul>
+</blockquote>
+          <div class="read-more">
+            <a href="/blog/2019/08/25/learning-parser-combinators-with-rust-4/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2019/07/22/googlectf2019-secureboot/">Google CTF 2019 - Secure Boot 题解</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-07-22
+        </span></div>
+    </header>
+
+    <div class="post-content"><h1 id="题目说明"><a href="#题目说明" class="headerlink" title="题目说明"></a>题目说明</h1><p>Your task is very simple: just boot this machine. We tried before but we always get ‘Security Violation’. For extra fancyness use <code>socat -,raw,echo=0 tcp:$IP:$PORT&#39;</code>.</p>
+          <div class="read-more">
+            <a href="/blog/2019/07/22/googlectf2019-secureboot/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2019/07/19/how2heap-5/">how2heap-5</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-07-19
+        </span></div>
+    </header>
+
+    <div class="post-content"><h1 id="how2heap-5"><a href="#how2heap-5" class="headerlink" title="how2heap - 5"></a>how2heap - 5</h1>
+          <div class="read-more">
+            <a href="/blog/2019/07/19/how2heap-5/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/blog/2019/07/10/how2heap-4/">how2heap-4</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-07-10
+        </span></div>
+    </header>
+
+    <div class="post-content"><h1 id="how2heap-4"><a href="#how2heap-4" class="headerlink" title="how2heap-4"></a>how2heap-4</h1>
+          <div class="read-more">
+            <a href="/blog/2019/07/10/how2heap-4/" class="read-more-link">Read more..</a>
+          </div>
+        </div></article>
+      <nav class="pagination"><a class="next" href="/blog/page/2/">
+        <span class="next-text">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></section></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

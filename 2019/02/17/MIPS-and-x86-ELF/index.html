@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="二进制翻译猜想-x86ToMIPS（一）"/><link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/2019/02/17/MIPS-and-x86-ELF/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>二进制翻译猜想-x86ToMIPS（一） - QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">二进制翻译猜想-x86ToMIPS（一）
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-02-17
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96%E6%A0%BC%E5%BC%8F"><span class="toc-text">内联汇编格式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#About"><span class="toc-text">About</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>尽管 MIPS 架构和 x86 架构不同，但是基于不同平台的 Linux 上 elf 文件的格式是大体相同的。我们是不是可以将 x86 中编译好的文件进行操作，提取其中的符号和数据，相关的 x86 汇编翻译成 MIPS 汇编，再重新编译，得到可以在 MIPS-Linux 上运行的 ELF 文件呢？这其实看上去蛮有趣的，实际的操作性如何呢？</p>
+<a id="more"></a>
+
+<p>我们以最简单的一个程序为例吧，源代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在之前的博客中有一些编译方法，我们编译之后得到了 <code>hello-mips</code> 和 <code>hello-i386</code> 这两个文件。拖入 IDA 中反汇编。</p>
+<p><img src="assets/mips-i386-1.png"></p>
+<p>可以看到，他们之间还真挺不同的（笑）。我们不考虑编译时附加的函数，只考虑我们写的 main 函数，翻译思路时=是什么样的呢？</p>
+<p>在 i386 的 main 函数中，我们看到有如下指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">.text:000004ED ; __unwind &#123;</span><br><span class="line">.text:000004ED                 push    ebp</span><br><span class="line">.text:000004EE                 mov     ebp, esp</span><br><span class="line">.text:000004F0                 call    __x86_get_pc_thunk_ax</span><br><span class="line">.text:000004F5                 add     eax, 1AE7h</span><br><span class="line">.text:000004FA                 mov     eax, 0</span><br><span class="line">.text:000004FF                 pop     ebp</span><br><span class="line">.text:00000500                 retn</span><br><span class="line">.text:00000500 ; &#125; &#x2F;&#x2F; starts at 4ED</span><br></pre></td></tr></table></figure>
+<p>这里面有一个 <code>__x86_get_pc_thunk_ax</code> 函数，经查询[^1]是由于栈保护引起的，因此我们要编译时加入参数（<code>-fno-pie</code>）。这回得到一个比较舒服的 main 汇编：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.text:000004ED                 push    ebp</span><br><span class="line">.text:000004EE                 mov     ebp, esp</span><br><span class="line">.text:000004F0                 mov     eax, 0</span><br><span class="line">.text:000004F5                 pop     ebp</span><br><span class="line">.text:000004F6                 retn</span><br></pre></td></tr></table></figure>
+<p>如果 main 函数不用 C 语言表示而是用内联汇编表示呢？</p>
+<p>其实这个几乎不需要写任何的内联汇编。。不过为了演示，我还是写了一句话：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    __asm__(</span><br><span class="line">        <span class="string">&quot;movl $0, %eax\n\t&quot;</span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>嗯。。简直不能再沙雕，它的 main 汇编是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">push    ebp</span><br><span class="line">mov     ebp, esp</span><br><span class="line">mov     eax, 0</span><br><span class="line">mov     eax, 0</span><br><span class="line">pop     ebp</span><br><span class="line">retn</span><br></pre></td></tr></table></figure>
+<p>不过。。我们是否可以也写一个相应的内联汇编，形式为 x86 翻译成 MIPS 的呢？</p>
+<p>在这之前，我们看一下 MIPS 汇编的情况吧。对于上述最简单的一个程序，它的 main 汇编是这样子的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var_4&#x3D; -4</span><br><span class="line">addiu   $sp, -8</span><br><span class="line">sw      $fp, 8+var_4($sp)</span><br><span class="line">move    $fp, $sp</span><br><span class="line">move    $v0, $zero</span><br><span class="line">move    $sp, $fp</span><br><span class="line">lw      $fp, 8+var_4($sp)</span><br><span class="line">addiu   $sp, 8</span><br><span class="line">jr      $ra</span><br><span class="line">nop</span><br></pre></td></tr></table></figure>
+<p>如果不考虑函数的压栈进栈操作，只考虑核心的话应该是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">move $v0, $zero</span><br></pre></td></tr></table></figure>
+<p>因此我们可以写成这样的形式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">asm</span>(</span><br><span class="line">        <span class="string">&quot;move $v0, $zero&quot;</span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来我们稍微加大一点难度。我仿照 nemu 中 <code>/nexus-am/tests/cputests</code> 中的测试数据，用 sum.c（代码如下）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt;= <span class="number">100</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        sum += i;</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译后的汇编代码如下（i386）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">.text:000004F3                 mov     [ebp+var_4], 1</span><br><span class="line">.text:000004FA                 mov     [ebp+var_8], 0</span><br><span class="line">.text:00000501                 jmp     short loc_512</span><br><span class="line">.text:00000503 ; ---------------------------------------------------------------------</span><br><span class="line">.text:00000503</span><br><span class="line">.text:00000503 loc_503:                                ; CODE XREF: main+29↓j</span><br><span class="line">.text:00000503                 mov     edx, [ebp+var_8]</span><br><span class="line">.text:00000506                 mov     eax, [ebp+var_4]</span><br><span class="line">.text:00000509                 add     eax, edx</span><br><span class="line">.text:0000050B                 mov     [ebp+var_8], eax</span><br><span class="line">.text:0000050E                 add     [ebp+var_4], 1</span><br><span class="line">.text:00000512</span><br><span class="line">.text:00000512 loc_512:                                ; CODE XREF: main+14↑j</span><br><span class="line">.text:00000512                 cmp     [ebp+var_4], 64h ; &#39;d&#39;</span><br><span class="line">.text:00000516                 jle     short loc_503</span><br></pre></td></tr></table></figure>
+<p>这个内联汇编可以写成什么呢？</p>
+<p>上述汇编是</p>
+<h1 id="内联汇编格式"><a href="#内联汇编格式" class="headerlink" title="内联汇编格式"></a>内联汇编格式</h1><h1 id="About"><a href="#About" class="headerlink" title="About"></a>About</h1><p>[^1]: <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/50105581/how-do-i-get-rid-of-call-x86-get-pc-thunk-ax">How do i get rid of call    __x86.get_pc_thunk.ax</a></p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://www.qrzbing.cn/blog">qrzbing</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://www.qrzbing.cn/blog/2019/02/17/MIPS-and-x86-ELF/">http://www.qrzbing.cn/blog/2019/02/17/MIPS-and-x86-ELF/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/02/20/arm-Linux-driver/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Linix驱动开发-萌新入门</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/02/16/MIPS-x86-cross-compilation/">
+        <span class="next-text nav-default">基础MIPS交叉编译和运行环境搭建</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

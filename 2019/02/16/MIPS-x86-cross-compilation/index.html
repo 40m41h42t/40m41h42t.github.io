@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="基础MIPS交叉编译和运行环境搭建"/><meta name="keywords" content="basic, QRZ's Blog" /><link rel="alternate" href="/blog/default" title="QRZ's Blog" ><link rel="shortcut icon" type="image/x-icon" href="/blog/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://www.qrzbing.cn/blog/2019/02/16/MIPS-x86-cross-compilation/"/>
+
+<link rel="stylesheet" type="text/css" href="/blog/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>基础MIPS交叉编译和运行环境搭建 - QRZ's Blog</title>
+  <meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/blog/." class="logo">QRZ's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/blog/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/blog/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/blog/tags/">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a><a href="/blog/categories/">
+        <li class="mobile-menu-item">Categories
+          </li>
+      </a><a href="/blog/about/">
+        <li class="mobile-menu-item">About
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/blog/." class="logo">QRZ's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/blog/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/tags/">
+            Tags
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/categories/">
+            Categories
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/blog/about/">
+            About
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">基础MIPS交叉编译和运行环境搭建
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-02-16
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Install"><span class="toc-text">Install</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Compile"><span class="toc-text">Compile</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Execute-by-user"><span class="toc-text">Execute by user</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Execute-by-Qemu-System"><span class="toc-text">Execute by Qemu-System</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Debug"><span class="toc-text">Debug</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#About"><span class="toc-text">About</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>嗯。。随便水一篇博客吧</p>
+<a id="more"></a>
+
+<h1 id="Install"><a href="#Install" class="headerlink" title="Install"></a>Install</h1><p>MIPS 交叉编译环境安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install linux-libc-dev-mips-cross </span><br><span class="line">sudo apt-get install libc6-mips-cross libc6-dev-mips-cross </span><br><span class="line">sudo apt-get install binutils-mips-linux-gnu gcc-mips-linux-gnu </span><br><span class="line">sudo apt-get install g++-mips-linux-gnu</span><br></pre></td></tr></table></figure>
+<h1 id="Compile"><a href="#Compile" class="headerlink" title="Compile"></a>Compile</h1><p>编译程序的例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mips-linux-gnu-gcc hello.c -o hello-mips</span><br></pre></td></tr></table></figure>
+<p>如果要运行的话可以考虑用 qemu-mips，我直接通过 apt 安装的 qemu，可以考虑编译一个新版本的 qemu。</p>
+<h1 id="Execute-by-user"><a href="#Execute-by-user" class="headerlink" title="Execute by user"></a>Execute by user</h1><p>运行例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-mips -L /usr/mips-linux-gnu/ hello-mips</span><br></pre></td></tr></table></figure>
+<p><code>-L</code> 意味着</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-L path       QEMU_LD_PREFIX    set the elf interpreter prefix to &#39;path&#39;</span><br></pre></td></tr></table></figure>
+<p>指向相应的库，如果不指的话默认会从 <code>/lib/</code> 里面找，自然是无法找到的。我们之前安装交叉编译环境的时候安装了相应的库。</p>
+<p>我们可以用下面的命令安装 MIPSEL 和 ARMEL 的库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install libc6-mipsel-cross</span><br><span class="line">sudo apt install libc6-armel-cross</span><br></pre></td></tr></table></figure>
+<p>想要查询相关的库情况，可以输入这个命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt search libc6-ARCH</span><br></pre></td></tr></table></figure>
+<h1 id="Execute-by-Qemu-System"><a href="#Execute-by-Qemu-System" class="headerlink" title="Execute by Qemu-System"></a>Execute by Qemu-System</h1><p>(TODO)</p>
+<h1 id="Debug"><a href="#Debug" class="headerlink" title="Debug"></a>Debug</h1><p>(TODO)</p>
+<h1 id="About"><a href="#About" class="headerlink" title="About"></a>About</h1><p><a target="_blank" rel="noopener" href="https://veritas501.space/2018/07/26/qemu%E7%BC%BAld.so%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/">qemu缺ld.so的解决方法</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-229583.htm">[原创]IoT安全：调试环境搭建教程(MIPS篇)</a></p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://www.qrzbing.cn/blog">qrzbing</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://www.qrzbing.cn/blog/2019/02/16/MIPS-x86-cross-compilation/">http://www.qrzbing.cn/blog/2019/02/16/MIPS-x86-cross-compilation/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/blog/tags/basic/">basic</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/blog/2019/02/17/MIPS-and-x86-ELF/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">二进制翻译猜想-x86ToMIPS（一）</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/blog/2019/02/16/The-Wandering-Earth/">
+        <span class="next-text nav-default">《流浪地球》观影感受</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:qrzbing#gmail.com" class="iconfont icon-email" title="email"></a>
+        <a target="_blank" rel="noopener" href="https://github.com/qrzbing" class="iconfont icon-github" title="github"></a>
+        <a href="/blog/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2015 - 2021<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">qrzbing</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/blog/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/blog/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/blog/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/blog/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>
